@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from sqlalchemy import text
+
+from app.db.database import SessionLocal
 
 app = FastAPI(
     title="Nexo API",
@@ -10,3 +13,14 @@ app = FastAPI(
 @app.get("/")
 def root():
     return {"message": "API do Nexo está funcionando"}
+
+
+@app.get("/health/db")
+def check_database():
+    db = SessionLocal()
+
+    try:
+        db.execute(text("SELECT 1"))
+        return {"database": "connected"}
+    finally:
+        db.close()
