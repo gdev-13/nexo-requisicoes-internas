@@ -1,13 +1,16 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.db.database import SessionLocal
+from app.db.database import Base, SessionLocal, engine
+from app.models.user import User
 
 app = FastAPI(
     title="Nexo API",
     description="API para gerenciamento de requisições internas",
     version="1.0.0",
 )
+
+Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
