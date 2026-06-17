@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from app.db.database import SessionLocal
 from app.db.init_db import init_db
-from app.routes import auth
+from app.routes import auth, request_type
 
 app = FastAPI(
     title="Nexo API",
@@ -14,6 +14,7 @@ app = FastAPI(
 init_db()
 
 app.include_router(auth.router)
+app.include_router(request_type.router)
 
 
 @app.get("/")
