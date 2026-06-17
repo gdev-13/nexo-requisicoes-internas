@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlalchemy import text
 
 from app.db.database import Base, SessionLocal, engine
-from app.models.user import User
+from app.routes import auth
 
 app = FastAPI(
     title="Nexo API",
@@ -11,6 +11,8 @@ app = FastAPI(
 )
 
 Base.metadata.create_all(bind=engine)
+
+app.include_router(auth.router)
 
 
 @app.get("/")
