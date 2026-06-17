@@ -22,6 +22,14 @@ def list_request_types(db: Session = Depends(get_db)):
     return db.query(RequestType).filter(RequestType.active.is_(True)).all()
 
 
+@router.get(
+    "/all",
+    response_model=list[RequestTypeResponse],
+    dependencies=[Depends(get_current_analyst)],
+)
+def list_all_request_types(db: Session = Depends(get_db)):
+    return db.query(RequestType).all()
+
 @router.post(
     "",
     response_model=RequestTypeResponse,
@@ -127,6 +135,35 @@ def disable_request_type(
         )
 
     request_type.active = False
+
+    db.commit()
+    db.refresh(request_type)
+
+    return request_type
+
+
+@router.patch(
+    "/{request_type_id}/enable",
+    response_model=RequestTypeResponse,
+    dependencies=[Depends(get_current_analyst)],
+)
+def enable_request_type(
+    request_type_id: int,
+    db: Session = Depends(get_db),
+):
+    request_type = (
+        db.query(RequestType)
+        .filter(RequestType.id == request_type_id)
+        .first()
+    )
+
+    if not request_type:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tipo de requisição não encontrado.",
+        )
+
+    request_type.active = True
 
     db.commit()
     db.refresh(request_type)
