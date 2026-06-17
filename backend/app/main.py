@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.db.database import Base, SessionLocal, engine
+from app.db.database import SessionLocal
+from app.db.init_db import init_db
 from app.routes import auth
 
 app = FastAPI(
@@ -10,7 +11,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-Base.metadata.create_all(bind=engine)
+init_db()
 
 app.include_router(auth.router)
 
