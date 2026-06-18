@@ -1,21 +1,39 @@
-<main>
-  <h1>Login</h1>
+<main class="login-page">
+  <section class="login-card">
+    <a class="brand" routerLink="/">
+      <img src="/nexo-logo.png" alt="Logo Nexo" />
 
-  <p>Acesse sua conta no Nexo.</p>
+      <span>
+        <small>Requisições internas</small>
+      </span>
+    </a>
 
-  <form>
-    <label>
-      E-mail
-      <input type="email" />
-    </label>
+    <div class="login-heading">
+      <span>Acesso à plataforma</span>
+      <h1>Entrar na conta</h1>
+      <p>
+        Acesse o Nexo para acompanhar solicitações, consultar históricos e gerenciar
+        requisições internas.
+      </p>
+    </div>
 
-    <label>
-      Senha
-      <input type="password" />
-    </label>
+    <form class="login-form">
+      <label>
+        E-mail
+        <input type="email" placeholder="seuemail@exemplo.com" />
+      </label>
 
-    <button type="button">Entrar</button>
-  </form>
+      <label>
+        Senha
+        <input type="password" placeholder="Digite sua senha" />
+      </label>
 
-  <a routerLink="/register">Criar conta</a>
+      <button type="button">Entrar</button>
+    </form>
+
+    <p class="login-footer">
+      Ainda não tem uma conta?
+      <a routerLink="/register">Criar cadastro</a>
+    </p>
+  </section>
 </main>
