@@ -1,10 +1,82 @@
-<main>
-  <h1>Nexo</h1>
+<main class="home-page">
+  <header class="home-header">
+    <a class="brand" routerLink="/">
+      <span class="brand-icon">
+        <img src="/nexo-logo.png" alt="Logo Nexo" />
+      </span>
 
-  <p>Sistema de requisições internas para abertura, análise e acompanhamento de solicitações.</p>
+      <span class="brand-text">
+        <small>Requisições internas</small>
+      </span>
+    </a>
 
-  <nav>
-    <a routerLink="/login">Entrar</a>
-    <a routerLink="/register">Criar conta</a>
-  </nav>
+    <nav class="home-nav">
+      <a routerLink="/login">Entrar</a>
+      <a routerLink="/register" class="nav-button">Criar conta</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-kicker">Sistema corporativo de solicitações</span>
+
+      <h1>Centralize requisições internas com organização e rastreabilidade.</h1>
+
+      <p>
+        O Nexo ajuda equipes a registrar solicitações, acompanhar análises,
+        consultar históricos e manter decisões documentadas em um fluxo simples
+        e profissional.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/login" class="primary-action">Acessar plataforma</a>
+        <a routerLink="/register" class="secondary-action">Criar minha conta</a>
+      </div>
+    </div>
+
+    <aside class="business-panel">
+      <div class="panel-header">
+        <span>Fluxo do Nexo</span>
+        <strong>Solicitação interna</strong>
+      </div>
+
+      <div class="workflow-list">
+        <article>
+          <span>01</span>
+          <div>
+            <strong>Abertura</strong>
+            <p>O solicitante registra a demanda com tipo, prioridade e descrição.</p>
+          </div>
+        </article>
+
+        <article>
+          <span>02</span>
+          <div>
+            <strong>Análise</strong>
+            <p>O analista avalia a solicitação e registra cada movimentação.</p>
+          </div>
+        </article>
+
+        <article>
+          <span>03</span>
+          <div>
+            <strong>Decisão</strong>
+            <p>A requisição pode ser aprovada, recusada, concluída ou cancelada.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="panel-metrics">
+        <article>
+          <strong>Histórico</strong>
+          <span>Movimentações registradas</span>
+        </article>
+
+        <article>
+          <strong>Status</strong>
+          <span>Acompanhamento claro</span>
+        </article>
+      </div>
+    </aside>
+  </section>
 </main>
