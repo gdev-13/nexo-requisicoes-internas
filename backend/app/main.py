@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.core.config import CORS_ORIGINS
 from app.db.database import SessionLocal
 from app.db.init_db import init_db
 from app.routes import auth, internal_request, request_type
@@ -10,6 +12,18 @@ app = FastAPI(
     description="API para gerenciamento de requisições internas",
     version="1.0.0",
 )
+
+
+origins = [origin.strip() for origin in CORS_ORIGINS.split(",")]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 init_db()
 
