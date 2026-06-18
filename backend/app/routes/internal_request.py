@@ -1,19 +1,73 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.dependencies.auth import get_current_analyst, get_current_user
-from app.models.internal_request import InternalRequest
+from app.models.internal_request import InternalRequest, RequestStatus
 from app.models.request_type import RequestType
 from app.models.user import User, UserRole
 from app.schemas.internal_request import (
     InternalRequestCreate,
     InternalRequestResponse,
+    RequestStatusAction,
 )
 from app.models.request_history import RequestHistory
 from app.schemas.request_history import RequestHistoryResponse
 
 router = APIRouter(prefix="/requests", tags=["Requisições Internas"])
+
+def create_history(
+    db: Session,
+    internal_request: InternalRequest,
+    user: User,
+    previous_status: RequestStatus | None,
+    new_status: RequestStatus,
+    comment: str | None,
+):
+    request_history = RequestHistory(
+        request_id=internal_request.id,
+        user_id=user.id,
+        previous_status=previous_status,
+        new_status=new_status,
+        comment=comment,
+    )
+
+    db.add(request_history)
+
+
+def change_request_status(
+    db: Session,
+    internal_request: InternalRequest,
+    user: User,
+    new_status: RequestStatus,
+    comment: str | None,
+):
+    previous_status = internal_request.status
+
+    internal_request.status = new_status
+
+    if new_status in {
+        RequestStatus.RECUSADA,
+        RequestStatus.CONCLUIDA,
+        RequestStatus.CANCELADA,
+    }:
+        internal_request.closed_at = datetime.now(timezone.utc)
+
+    create_history(
+        db=db,
+        internal_request=internal_request,
+        user=user,
+        previous_status=previous_status,
+        new_status=new_status,
+        comment=comment,
+    )
+
+    db.commit()
+    db.refresh(internal_request)
+
+    return internal_request
 
 
 @router.post(
@@ -53,15 +107,16 @@ def create_internal_request(
     db.commit()
     db.refresh(new_request)
 
-    request_history = RequestHistory(
-    request_id=new_request.id,
-    user_id=current_user.id,
-    previous_status=None,
-    new_status=new_request.status,
-    comment="Requisição criada.",
+    create_history(
+        db=db,
+        internal_request=new_request,
+        user=current_user,
+        previous_status=None,
+        new_status=new_request.status,
+        comment="Requisição criada.",
     )
 
-    db.add(request_history)
+    db.commit()
     db.commit()
 
     return new_request
@@ -155,4 +210,204 @@ def list_request_history(
         .filter(RequestHistory.request_id == request_id)
         .order_by(RequestHistory.created_at.asc())
         .all()
+    )
+
+
+@router.patch(
+    "/{request_id}/start-analysis",
+    response_model=InternalRequestResponse,
+)
+def start_request_analysis(
+    request_id: int,
+    action_data: RequestStatusAction,
+    current_user: User = Depends(get_current_analyst),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    if internal_request.status != RequestStatus.SOLICITADA:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Apenas requisições solicitadas podem entrar em análise.",
+        )
+
+    return change_request_status(
+        db=db,
+        internal_request=internal_request,
+        user=current_user,
+        new_status=RequestStatus.EM_ANALISE,
+        comment=action_data.comment or "Requisição colocada em análise.",
+    )
+
+
+@router.patch(
+    "/{request_id}/approve",
+    response_model=InternalRequestResponse,
+)
+def approve_request(
+    request_id: int,
+    action_data: RequestStatusAction,
+    current_user: User = Depends(get_current_analyst),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    if internal_request.status != RequestStatus.EM_ANALISE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Apenas requisições em análise podem ser aprovadas.",
+        )
+
+    return change_request_status(
+        db=db,
+        internal_request=internal_request,
+        user=current_user,
+        new_status=RequestStatus.APROVADA,
+        comment=action_data.comment or "Requisição aprovada.",
+    )
+
+
+@router.patch(
+    "/{request_id}/reject",
+    response_model=InternalRequestResponse,
+)
+def reject_request(
+    request_id: int,
+    action_data: RequestStatusAction,
+    current_user: User = Depends(get_current_analyst),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    if internal_request.status != RequestStatus.EM_ANALISE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Apenas requisições em análise podem ser recusadas.",
+        )
+
+    if not action_data.comment or not action_data.comment.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Informe uma justificativa para recusar a requisição.",
+        )
+
+    return change_request_status(
+        db=db,
+        internal_request=internal_request,
+        user=current_user,
+        new_status=RequestStatus.RECUSADA,
+        comment=action_data.comment,
+    )
+
+
+@router.patch(
+    "/{request_id}/conclude",
+    response_model=InternalRequestResponse,
+)
+def conclude_request(
+    request_id: int,
+    action_data: RequestStatusAction,
+    current_user: User = Depends(get_current_analyst),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    if internal_request.status != RequestStatus.APROVADA:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Apenas requisições aprovadas podem ser concluídas.",
+        )
+
+    return change_request_status(
+        db=db,
+        internal_request=internal_request,
+        user=current_user,
+        new_status=RequestStatus.CONCLUIDA,
+        comment=action_data.comment or "Requisição concluída.",
+    )
+
+
+@router.patch(
+    "/{request_id}/cancel",
+    response_model=InternalRequestResponse,
+)
+def cancel_request(
+    request_id: int,
+    action_data: RequestStatusAction,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    if internal_request.requester_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você só pode cancelar suas próprias requisições.",
+        )
+
+    if internal_request.status not in {
+        RequestStatus.SOLICITADA,
+        RequestStatus.EM_ANALISE,
+    }:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Esta requisição não pode mais ser cancelada.",
+        )
+
+    return change_request_status(
+        db=db,
+        internal_request=internal_request,
+        user=current_user,
+        new_status=RequestStatus.CANCELADA,
+        comment=action_data.comment or "Requisição cancelada pelo solicitante.",
     )
