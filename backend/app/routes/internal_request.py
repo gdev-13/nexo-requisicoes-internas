@@ -10,6 +10,8 @@ from app.schemas.internal_request import (
     InternalRequestCreate,
     InternalRequestResponse,
 )
+from app.models.request_history import RequestHistory
+from app.schemas.request_history import RequestHistoryResponse
 
 router = APIRouter(prefix="/requests", tags=["Requisições Internas"])
 
@@ -50,6 +52,17 @@ def create_internal_request(
     db.add(new_request)
     db.commit()
     db.refresh(new_request)
+
+    request_history = RequestHistory(
+    request_id=new_request.id,
+    user_id=current_user.id,
+    previous_status=None,
+    new_status=new_request.status,
+    comment="Requisição criada.",
+    )
+
+    db.add(request_history)
+    db.commit()
 
     return new_request
 
@@ -108,3 +121,38 @@ def get_request_by_id(
         )
 
     return internal_request
+
+
+@router.get("/{request_id}/history", response_model=list[RequestHistoryResponse])
+def list_request_history(
+    request_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    internal_request = (
+        db.query(InternalRequest)
+        .filter(InternalRequest.id == request_id)
+        .first()
+    )
+
+    if not internal_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requisição não encontrada.",
+        )
+
+    is_owner = internal_request.requester_id == current_user.id
+    is_analyst = current_user.role == UserRole.ANALYST
+
+    if not is_owner and not is_analyst:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para acessar o histórico desta requisição.",
+        )
+
+    return (
+        db.query(RequestHistory)
+        .filter(RequestHistory.request_id == request_id)
+        .order_by(RequestHistory.created_at.asc())
+        .all()
+    )
