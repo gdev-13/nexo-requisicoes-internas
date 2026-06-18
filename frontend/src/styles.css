@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+    --color-primary: #2454c6;
+    --color-primary-dark: #163c92;
+    --color-primary-soft: #e8efff;
+
+    --color-bg: #eef3fb;
+    --color-surface: #ffffff;
+    --color-surface-soft: #f8faff;
+
+    --color-text: #172033;
+    --color-muted: #667085;
+    --color-border: #d9e2f1;
+
+    --color-danger: #dc2626;
+    --color-danger-soft: #fee2e2;
+
+    --shadow-card: 0 18px 45px rgba(15, 35, 80, 0.12);
+    --shadow-soft: 0 10px 30px rgba(15, 35, 80, 0.08);
+
+    --radius-lg: 24px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    cursor: pointer;
+}
