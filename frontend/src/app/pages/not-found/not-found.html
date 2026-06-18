@@ -1,7 +1,26 @@
-<main>
-  <h1>404</h1>
+<main class="not-found-page">
+  <section class="not-found-card">
+    <a class="brand" routerLink="/">
+      <img src="/nexo-logo.png" alt="Logo Nexo" />
 
-  <p>Página não encontrada.</p>
+      <span>
+        <small>Requisições internas</small>
+      </span>
+    </a>
 
-  <a routerLink="/login">Voltar para o login</a>
+    <div class="not-found-content">
+      <span class="error-code">404</span>
+
+      <h1>Página não encontrada</h1>
+
+      <p>
+        A rota acessada não existe, foi removida ou ainda não está disponível na plataforma.
+      </p>
+
+      <div class="not-found-actions">
+        <a routerLink="/" class="primary-action">Voltar para a Home</a>
+        <a routerLink="/login" class="secondary-action">Ir para o login</a>
+      </div>
+    </div>
+  </section>
 </main>
