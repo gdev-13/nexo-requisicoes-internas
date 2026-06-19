@@ -1,0 +1,51 @@
+<div
+  class="sidebar-backdrop"
+  [class.visible]="isOpen"
+  (click)="onCloseSidebar()"
+  aria-hidden="true"
+></div>
+
+<aside
+  id="app-sidebar"
+  class="sidebar"
+  [class.sidebar-open]="isOpen"
+  aria-label="Navegação principal"
+>
+  <div class="sidebar-header">
+    <a class="sidebar-brand" routerLink="/" (click)="onCloseSidebar()">
+      <span class="logo-box">
+        <img src="/nexo-logo.png" alt="Logo Nexo" />
+      </span>
+
+      <span>
+        <small>Requisições internas</small>
+      </span>
+    </a>
+
+    <button class="sidebar-close" type="button" aria-label="Fechar menu" (click)="onCloseSidebar()">
+      ×
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="onCloseSidebar()"
+    >
+      Dashboard
+    </a>
+
+    <span class="sidebar-item disabled">Minhas requisições</span>
+    <span class="sidebar-item disabled">Nova requisição</span>
+    <span class="sidebar-item disabled">Todas as requisições</span>
+    <span class="sidebar-item disabled">Tipos de requisição</span>
+    <span class="sidebar-item disabled">Histórico</span>
+
+</nav>
+    <div class="sidebar-user">
+        <span>Perfil</span>
+        <small>Dados carregados após login</small>
+    </div>
+</aside>
