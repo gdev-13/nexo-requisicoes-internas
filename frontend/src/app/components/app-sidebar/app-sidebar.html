@@ -43,7 +43,7 @@
     <span class="sidebar-item disabled">Tipos de requisição</span>
     <span class="sidebar-item disabled">Histórico</span>
 
-</nav>
+  </nav>
     <div class="sidebar-user">
       @if (isLoadingUser) {
         <span>Carregando perfil...</span>
@@ -51,6 +51,8 @@
       } @else if (currentUser) {
         <span>{{ currentUser.name }}</span>
         <small>{{ getRoleLabel(currentUser.role) }} • {{ currentUser.email }}</small>
+
+        <button type="button" (click)="onLogout()">Sair</button>
       } @else {
         <span>Perfil indisponível</span>
         <small>Faça login novamente</small>
