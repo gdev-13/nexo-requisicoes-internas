@@ -1,97 +1,78 @@
-<main class="dashboard-page">
-  <app-sidebar
-    [isOpen]="isSidebarOpen"
-    [isLoadingUser]="isLoadingUser()"
-    [currentUser]="currentUser()"
-    (closeSidebar)="closeSidebar()"
-  ></app-sidebar>
+<app-layout>
+  <header class="dashboard-header">
+    <div>
+      <span>Painel inicial</span>
+      <h1>Visão geral das requisições</h1>
+      <p>
+        Acompanhe solicitações internas, status de análise e movimentações
+        recentes em um único ambiente.
+      </p>
+    </div>
 
-  <section class="dashboard-content">
-    <button
-      class="mobile-menu-button"
-      type="button"
-      aria-controls="app-sidebar"
-      [attr.aria-expanded]="isSidebarOpen"
-      (click)="openSidebar()"
-    >
-      ☰ Menu
-    </button>
+    <button type="button">Nova requisição</button>
+  </header>
 
-    <header class="dashboard-header">
-      <div>
-        <span>Painel inicial</span>
-        <h1>Visão geral das requisições</h1>
-        <p>
-          Acompanhe solicitações internas, status de análise e movimentações
-          recentes em um único ambiente.
-        </p>
+  <section class="summary-grid">
+    <article class="summary-card">
+      <span>Minhas requisições</span>
+      <strong>—</strong>
+      <p>Dados serão exibidos após a integração com a API.</p>
+    </article>
+
+    <article class="summary-card">
+      <span>Em análise</span>
+      <strong>—</strong>
+      <p>Dados serão exibidos após a integração com a API.</p>
+    </article>
+
+    <article class="summary-card">
+      <span>Concluídas</span>
+      <strong>—</strong>
+      <p>Dados serão exibidos após a integração com a API.</p>
+    </article>
+
+    <article class="summary-card">
+      <span>Tipos ativos</span>
+      <strong>—</strong>
+      <p>Dados serão exibidos após a integração com a API.</p>
+    </article>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel-card">
+      <div class="panel-header">
+        <div>
+          <span>Requisições</span>
+          <h2>Últimas solicitações</h2>
+        </div>
       </div>
 
-      <button type="button">Nova requisição</button>
-    </header>
-
-    <section class="summary-grid">
-      <article class="summary-card">
-        <span>Minhas requisições</span>
-        <strong>—</strong>
-        <p>Dados serão exibidos após a integração com a API.</p>
-      </article>
-
-      <article class="summary-card">
-        <span>Em análise</span>
-        <strong>—</strong>
-        <p>Dados serão exibidos após a integração com a API.</p>
-      </article>
-
-      <article class="summary-card">
-        <span>Concluídas</span>
-        <strong>—</strong>
-        <p>Dados serão exibidos após a integração com a API.</p>
-      </article>
-
-      <article class="summary-card">
-        <span>Tipos ativos</span>
-        <strong>—</strong>
-        <p>Dados serão exibidos após a integração com a API.</p>
-      </article>
-    </section>
-
-    <section class="dashboard-grid">
-      <article class="panel-card">
-        <div class="panel-header">
-          <div>
-            <span>Requisições</span>
-            <h2>Últimas solicitações</h2>
-          </div>
+      <div class="panel-body">
+        <div class="empty-state">
+          <strong>Nenhuma requisição carregada</strong>
+          <p>
+            As solicitações aparecerão aqui quando o frontend estiver integrado ao backend.
+          </p>
         </div>
+      </div>
+    </article>
 
-        <div class="panel-body">
-          <div class="empty-state">
-            <strong>Nenhuma requisição carregada</strong>
-            <p>
-              As solicitações aparecerão aqui quando o frontend estiver integrado ao backend.
-            </p>
-          </div>
+    <article class="panel-card">
+      <div class="panel-header">
+        <div>
+          <span>Histórico</span>
+          <h2>Movimentações recentes</h2>
         </div>
-      </article>
+      </div>
 
-      <article class="panel-card">
-        <div class="panel-header">
-          <div>
-            <span>Histórico</span>
-            <h2>Movimentações recentes</h2>
-          </div>
+      <div class="panel-body">
+        <div class="empty-state">
+          <strong>Nenhuma movimentação carregada</strong>
+          <p>
+            O histórico será exibido após a busca dos dados reais da API.
+          </p>
         </div>
-
-        <div class="panel-body">
-          <div class="empty-state">
-            <strong>Nenhuma movimentação carregada</strong>
-            <p>
-              O histórico será exibido após a busca dos dados reais da API.
-            </p>
-          </div>
-        </div>
-      </article>
-    </section>
+      </div>
+    </article>
   </section>
-</main>
+</app-layout>

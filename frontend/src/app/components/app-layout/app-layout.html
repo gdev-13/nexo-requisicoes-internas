@@ -1,0 +1,22 @@
+<main class="app-layout">
+  <app-sidebar
+    [isOpen]="isSidebarOpen"
+    [isLoadingUser]="isLoadingUser()"
+    [currentUser]="currentUser()"
+    (closeSidebar)="closeSidebar()"
+  ></app-sidebar>
+
+  <section class="app-layout-content">
+    <button
+      class="mobile-menu-button"
+      type="button"
+      aria-controls="app-sidebar"
+      [attr.aria-expanded]="isSidebarOpen"
+      (click)="openSidebar()"
+    >
+      ☰ Menu
+    </button>
+
+    <ng-content></ng-content>
+  </section>
+</main>
