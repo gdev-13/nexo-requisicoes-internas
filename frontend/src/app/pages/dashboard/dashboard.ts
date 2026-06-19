@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -15,8 +15,9 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Dashboard implements OnInit {
   isSidebarOpen = false;
-  isLoadingUser = true;
-  currentUser: UserResponse | null = null;
+
+  isLoadingUser = signal(true);
+  currentUser = signal<UserResponse | null>(null);
 
   constructor(
     private readonly authService: AuthService,
@@ -41,12 +42,12 @@ export class Dashboard implements OnInit {
       .getCurrentUser()
       .pipe(
         finalize(() => {
-          this.isLoadingUser = false;
+          this.isLoadingUser.set(false);
         }),
       )
       .subscribe({
         next: (user) => {
-          this.currentUser = user;
+          this.currentUser.set(user);
         },
         error: () => {
           this.authStorageService.clearToken();
