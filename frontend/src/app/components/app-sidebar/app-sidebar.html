@@ -38,7 +38,13 @@
     </a>
 
     <span class="sidebar-item disabled">Minhas requisições</span>
-    <span class="sidebar-item disabled">Nova requisição</span>
+    <a
+      routerLink="/requests/new"
+      routerLinkActive="active"
+      (click)="onCloseSidebar()"
+    >
+      Nova requisição
+    </a>
     <span class="sidebar-item disabled">Todas as requisições</span>
     <span class="sidebar-item disabled">Tipos de requisição</span>
     <span class="sidebar-item disabled">Histórico</span>

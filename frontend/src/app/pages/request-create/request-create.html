@@ -1,0 +1,119 @@
+<app-layout>
+  <section class="request-create-page">
+    <header class="page-header">
+      <div>
+        <span>Nova requisição</span>
+        <h1>Abrir solicitação interna</h1>
+        <p>
+          Registre uma nova demanda para que ela possa ser acompanhada,
+          analisada e movimentada dentro do fluxo do Nexo.
+        </p>
+      </div>
+
+      <a routerLink="/dashboard">Voltar ao painel</a>
+    </header>
+
+    <article class="form-card">
+      @if (isLoadingTypes()) {
+        <div class="empty-state">
+          <strong>Carregando tipos de requisição...</strong>
+          <p>Aguarde enquanto buscamos as opções disponíveis.</p>
+        </div>
+      } @else if (!requestTypes().length) {
+        <div class="empty-state">
+          <strong>Nenhum tipo de requisição ativo</strong>
+          <p>
+            Para abrir uma solicitação, é necessário que exista ao menos um tipo
+            de requisição ativo cadastrado.
+          </p>
+        </div>
+      } @else {
+        <form
+          class="request-form"
+          #requestForm="ngForm"
+          (ngSubmit)="onSubmit(requestForm)"
+          novalidate
+        >
+          @if (errorMessage()) {
+            <p class="feedback error">{{ errorMessage() }}</p>
+          }
+
+          <label>
+            <span>Título</span>
+            <input
+              type="text"
+              name="title"
+              [(ngModel)]="formData.title"
+              #title="ngModel"
+              required
+              minlength="3"
+              placeholder="Ex.: Solicitação de novo equipamento"
+            />
+
+            @if (title.invalid && title.touched) {
+              <small>Informe um título com pelo menos 3 caracteres.</small>
+            }
+          </label>
+
+          <label>
+            <span>Tipo de requisição</span>
+            <select
+              name="request_type_id"
+              [(ngModel)]="formData.request_type_id"
+              #requestTypeId="ngModel"
+              required
+            >
+              <option [ngValue]="0" disabled>Selecione um tipo</option>
+
+              @for (type of requestTypes(); track type.id) {
+                <option [ngValue]="type.id">{{ type.name }}</option>
+              }
+            </select>
+
+            @if (requestTypeId.invalid && requestTypeId.touched) {
+              <small>Selecione o tipo da requisição.</small>
+            }
+          </label>
+
+          <label>
+            <span>Prioridade</span>
+            <select
+              name="priority"
+              [(ngModel)]="formData.priority"
+              required
+            >
+              @for (priority of priorities; track priority) {
+                <option [ngValue]="priority">{{ getPriorityLabel(priority) }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Descrição</span>
+            <textarea
+              name="description"
+              [(ngModel)]="formData.description"
+              #description="ngModel"
+              required
+              minlength="10"
+              rows="7"
+              placeholder="Descreva a necessidade, contexto e informações importantes para análise."
+            ></textarea>
+
+            @if (description.invalid && description.touched) {
+              <small>Informe uma descrição com pelo menos 10 caracteres.</small>
+            }
+          </label>
+
+          <div class="form-actions">
+            <a routerLink="/dashboard">Cancelar</a>
+
+            <button type="submit" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Enviando...' : 'Criar requisição' }}
+            </button>
+          </div>
+        </form>
+      }
+    </article>
+  </section>
+</app-layout>

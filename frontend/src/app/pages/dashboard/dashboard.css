@@ -31,7 +31,10 @@
   line-height: 1.65;
 }
 
-.dashboard-header button {
+.dashboard-header .primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 46px;
   padding: 0 18px;
   color: #ffffff;
@@ -39,10 +42,11 @@
   border: 0;
   border-radius: var(--radius-md);
   font-weight: 900;
+  text-decoration: none;
   box-shadow: 0 14px 26px rgba(36, 84, 198, 0.22);
 }
 
-.dashboard-header button:hover {
+.dashboard-header .primary-action:hover {
   background: var(--color-primary-dark);
 }
 
@@ -155,7 +159,7 @@
     flex-direction: column;
   }
 
-  .dashboard-header button {
+  .dashboard-header .primary-action {
     width: 100%;
   }
 }
