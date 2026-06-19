@@ -17,23 +17,74 @@
       </p>
     </div>
 
-    <form class="register-form">
+    <form
+      class="register-form"
+      #registerForm="ngForm"
+      (ngSubmit)="onSubmit(registerForm)"
+      novalidate
+    >
       <label>
         Nome
-        <input type="text" placeholder="Seu nome completo" />
+        <input
+          type="text"
+          name="name"
+          placeholder="Seu nome completo"
+          [(ngModel)]="formData.name"
+          #name="ngModel"
+          required
+          minlength="3"
+        />
       </label>
+
+      @if (name.invalid && name.touched) {
+        <p class="field-error">Informe um nome com pelo menos 3 caracteres.</p>
+      }
 
       <label>
         E-mail
-        <input type="email" placeholder="seuemail@exemplo.com" />
+        <input
+          type="email"
+          name="email"
+          placeholder="seuemail@exemplo.com"
+          [(ngModel)]="formData.email"
+          #email="ngModel"
+          required
+          email
+        />
       </label>
+
+      @if (email.invalid && email.touched) {
+        <p class="field-error">Informe um e-mail válido.</p>
+      }
 
       <label>
         Senha
-        <input type="password" placeholder="Mínimo de 6 caracteres" />
+        <input
+          type="password"
+          name="password"
+          placeholder="Mínimo de 6 caracteres"
+          [(ngModel)]="formData.password"
+          #password="ngModel"
+          required
+          minlength="6"
+        />
       </label>
 
-      <button type="button">Criar conta</button>
+      @if (password.invalid && password.touched) {
+        <p class="field-error">A senha deve ter pelo menos 6 caracteres.</p>
+      }
+
+      @if (errorMessage) {
+        <p class="feedback error">{{ errorMessage }}</p>
+      }
+
+      @if (successMessage) {
+        <p class="feedback success">{{ successMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Cadastrando...' : 'Criar conta' }}
+      </button>
     </form>
 
     <p class="register-footer">
