@@ -55,7 +55,7 @@ export class Login {
       .subscribe({
         next: (response) => {
           this.authStorageService.saveToken(response.access_token);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard'], {replaceUrl: true});
         },
         error: (error: HttpErrorResponse) => {
           this.errorMessage = this.getLoginErrorMessage(error);
