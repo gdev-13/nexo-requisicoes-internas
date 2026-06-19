@@ -1,6 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { AppSidebar } from '../../components/app-sidebar/app-sidebar';
+import { UserResponse } from '../../models/auth';
+import { AuthStorageService } from '../../services/auth-storage.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,8 +13,20 @@ import { AppSidebar } from '../../components/app-sidebar/app-sidebar';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   isSidebarOpen = false;
+  isLoadingUser = true;
+  currentUser: UserResponse | null = null;
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly authStorageService: AuthStorageService,
+    private readonly router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCurrentUser();
+  }
 
   openSidebar(): void {
     this.isSidebarOpen = true;
@@ -17,5 +34,24 @@ export class Dashboard {
 
   closeSidebar(): void {
     this.isSidebarOpen = false;
+  }
+
+  private loadCurrentUser(): void {
+    this.authService
+      .getCurrentUser()
+      .pipe(
+        finalize(() => {
+          this.isLoadingUser = false;
+        }),
+      )
+      .subscribe({
+        next: (user) => {
+          this.currentUser = user;
+        },
+        error: () => {
+          this.authStorageService.clearToken();
+          this.router.navigate(['/login']);
+        },
+      });
   }
 }

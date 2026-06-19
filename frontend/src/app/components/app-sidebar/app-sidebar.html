@@ -45,7 +45,15 @@
 
 </nav>
     <div class="sidebar-user">
-        <span>Perfil</span>
-        <small>Dados carregados após login</small>
+      @if (isLoadingUser) {
+        <span>Carregando perfil...</span>
+        <small>Verificando usuário logado</small>
+      } @else if (currentUser) {
+        <span>{{ currentUser.name }}</span>
+        <small>{{ getRoleLabel(currentUser.role) }} • {{ currentUser.email }}</small>
+      } @else {
+        <span>Perfil indisponível</span>
+        <small>Faça login novamente</small>
+      }
     </div>
 </aside>

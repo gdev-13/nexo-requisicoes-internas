@@ -1,6 +1,8 @@
 <main class="dashboard-page">
   <app-sidebar
     [isOpen]="isSidebarOpen"
+    [isLoadingUser]="isLoadingUser"
+    [currentUser]="currentUser"
     (closeSidebar)="closeSidebar()"
   ></app-sidebar>
 
