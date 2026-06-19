@@ -17,18 +17,53 @@
       </p>
     </div>
 
-    <form class="login-form">
+    <form
+      class="login-form"
+      #loginForm="ngForm"
+      (ngSubmit)="onSubmit(loginForm)"
+      novalidate
+    >
       <label>
         E-mail
-        <input type="email" placeholder="seuemail@exemplo.com" />
+        <input
+          type="email"
+          name="email"
+          placeholder="seuemail@exemplo.com"
+          [(ngModel)]="formData.email"
+          #email="ngModel"
+          required
+          email
+        />
       </label>
+
+      @if (email.invalid && email.touched) {
+        <p class="field-error">Informe um e-mail válido.</p>
+      }
 
       <label>
         Senha
-        <input type="password" placeholder="Digite sua senha" />
+        <input
+          type="password"
+          name="password"
+          placeholder="Digite sua senha"
+          [(ngModel)]="formData.password"
+          #password="ngModel"
+          required
+          minlength="6"
+        />
       </label>
 
-      <button type="button">Entrar</button>
+      @if (password.invalid && password.touched) {
+        <p class="field-error">A senha deve ter pelo menos 6 caracteres.</p>
+      }
+
+      @if (errorMessage) {
+        <p class="feedback error">{{ errorMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+      </button>
     </form>
 
     <p class="login-footer">
