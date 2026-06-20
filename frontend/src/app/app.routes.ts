@@ -9,9 +9,11 @@ import { RequestCreate } from './pages/request-create/request-create';
 import { MyRequests } from './pages/my-requests/my-requests';
 import { RequestDetails } from './pages/request-details/request-details';
 import { RequestTypes } from './pages/request-types/request-types';
+import { AllRequests } from './pages/all-requests/all-requests';
 
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
+import { analystGuard } from './guards/analyst.guard';
 
 export const routes: Routes = [
   {
@@ -53,6 +55,11 @@ export const routes: Routes = [
     path: 'request-types',
     component: RequestTypes,
     canActivate: [authGuard]
+  },
+  {
+    path: 'requests',
+    component: AllRequests,
+    canActivate: [analystGuard]
   },
   {
     path: '**',

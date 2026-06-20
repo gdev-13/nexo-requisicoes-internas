@@ -53,7 +53,15 @@
       </a>
     }
     @if (isAnalyst()) {
-      <span class="sidebar-item disabled">Todas as requisições</span>
+      @if (isAnalyst()) {
+        <a
+          routerLink="/requests"
+          routerLinkActive="active"
+          (click)="onCloseSidebar()"
+        >
+          Todas as requisições
+        </a>
+      }
     }
     <a
       routerLink="/request-types"

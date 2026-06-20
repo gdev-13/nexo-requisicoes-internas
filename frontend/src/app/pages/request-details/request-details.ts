@@ -82,6 +82,20 @@ export class RequestDetails implements OnInit {
     return this.currentUser()?.role === 'REQUESTER';
   }
 
+  isAnalyst(): boolean {
+    return this.currentUser()?.role === 'ANALYST';
+  }
+
+  getBackLink(): string {
+    return this.isAnalyst() ? '/requests' : '/requests/my';
+  }
+
+  getBackLabel(): string {
+    return this.isAnalyst()
+      ? 'Voltar para todas as requisições'
+      : 'Voltar para minhas requisições';
+  }
+
   canCancelRequest(): boolean {
     const request = this.request();
 
@@ -164,6 +178,6 @@ export class RequestDetails implements OnInit {
         error: () => {
           this.errorMessage.set('Não foi possível carregar os detalhes da requisição.');
         },
-      });
+    });
   }
 }

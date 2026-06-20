@@ -9,7 +9,7 @@
       <article class="empty-state error">
         <strong>Não foi possível carregar os dados</strong>
         <p>{{ errorMessage() }}</p>
-        <a routerLink="/requests/my">Voltar para minhas requisições</a>
+        <a [routerLink]="getBackLink()">{{ getBackLabel() }}</a>
       </article>
     } @else if (request()) {
       <header class="page-header">
@@ -22,7 +22,7 @@
           </p>
         </div>
 
-        <a routerLink="/requests/my">Voltar</a>
+        <a [routerLink]="getBackLink()">Voltar</a>
       </header>
 
       <section class="details-grid">
