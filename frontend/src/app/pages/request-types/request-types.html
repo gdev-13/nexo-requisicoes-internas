@@ -21,13 +21,74 @@
       </div>
     </header>
 
+    @if (isAnalyst()) {
+      <article class="form-card">
+        <div class="form-header">
+          <div>
+            <span>Novo tipo</span>
+            <h2>Cadastrar tipo de requisição</h2>
+          </div>
+        </div>
+
+        <form
+          class="type-form"
+          #typeForm="ngForm"
+          (ngSubmit)="onSubmit(typeForm)"
+          novalidate
+        >
+          @if (successMessage()) {
+            <p class="feedback success">{{ successMessage() }}</p>
+          }
+
+          @if (errorMessage()) {
+            <p class="feedback error">{{ errorMessage() }}</p>
+          }
+
+          <label>
+            <span>Nome</span>
+            <input
+              type="text"
+              name="name"
+              [(ngModel)]="formData.name"
+              #name="ngModel"
+              required
+              minlength="3"
+              maxlength="80"
+              placeholder="Ex.: Equipamentos"
+            />
+
+            @if (name.invalid && name.touched) {
+              <small>Informe um nome com pelo menos 3 caracteres.</small>
+            }
+          </label>
+
+          <label>
+            <span>Descrição</span>
+            <textarea
+              name="description"
+              [(ngModel)]="formData.description"
+              rows="4"
+              maxlength="500"
+              placeholder="Explique quando este tipo deve ser usado."
+            ></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Cadastrando...' : 'Cadastrar tipo' }}
+            </button>
+          </div>
+        </form>
+      </article>
+    }
+
     <article class="types-card">
       @if (isLoading()) {
         <div class="empty-state">
           <strong>Carregando tipos de requisição...</strong>
           <p>Aguarde enquanto buscamos as categorias disponíveis.</p>
         </div>
-      } @else if (errorMessage()) {
+      } @else if (errorMessage() && !requestTypes().length) {
         <div class="empty-state error">
           <strong>Não foi possível carregar os dados</strong>
           <p>{{ errorMessage() }}</p>
