@@ -412,10 +412,7 @@ def cancel_request(
             detail="Você só pode cancelar suas próprias requisições.",
         )
 
-    if internal_request.status not in {
-        RequestStatus.SOLICITADA,
-        RequestStatus.EM_ANALISE,
-    }:
+    if internal_request.status != RequestStatus.SOLICITADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Esta requisição não pode mais ser cancelada.",

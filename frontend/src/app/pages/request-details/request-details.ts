@@ -153,7 +153,7 @@ export class RequestDetails implements OnInit {
       return false;
     }
 
-    return request.status === 'SOLICITADA' || request.status === 'EM_ANALISE';
+    return request.status === 'SOLICITADA';
   }
 
   onCancelRequest(): void {
