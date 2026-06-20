@@ -55,7 +55,13 @@
     @if (isAnalyst()) {
       <span class="sidebar-item disabled">Todas as requisições</span>
     }
-    <span class="sidebar-item disabled">Tipos de requisição</span>
+    <a
+      routerLink="/request-types"
+      routerLinkActive="active"
+      (click)="onCloseSidebar()"
+    >
+      Tipos de requisição
+    </a>
     <span class="sidebar-item disabled">Histórico</span>
 
   </nav>

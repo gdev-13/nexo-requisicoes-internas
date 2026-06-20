@@ -1,0 +1,126 @@
+.request-types-page {
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 26px;
+}
+
+.page-header span,
+.type-header span {
+  color: var(--color-primary);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.page-header h1 {
+  margin-top: 8px;
+  color: var(--color-text);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.page-header p {
+  max-width: 720px;
+  margin-top: 12px;
+  color: var(--color-muted);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.types-card {
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.type-card {
+  padding: 20px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.type-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.type-header h2 {
+  margin-top: 6px;
+  color: var(--color-text);
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+}
+
+.type-header strong {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  color: #047857;
+  background: #d1fae5;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.type-header strong.inactive {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.type-card p {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.empty-state {
+  padding: 32px;
+  text-align: center;
+  background: var(--color-surface-soft);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.empty-state strong {
+  display: block;
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.empty-state p {
+  max-width: 520px;
+  margin: 10px auto 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.empty-state.error strong,
+.empty-state.error p {
+  color: var(--color-danger);
+}
+
+@media (max-width: 560px) {
+  .types-card {
+    padding: 18px;
+  }
+
+  .type-header {
+    flex-direction: column;
+  }
+}

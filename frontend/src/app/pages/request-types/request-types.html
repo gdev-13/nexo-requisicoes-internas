@@ -1,0 +1,68 @@
+<app-layout (currentUserLoaded)="setCurrentUser($event)">
+  <section class="request-types-page">
+    <header class="page-header">
+      <div>
+        <span>Tipos de requisição</span>
+
+        @if (isAnalyst()) {
+          <h1>Consulte os tipos cadastrados</h1>
+          <p>
+            Visualize os tipos de requisição existentes no sistema, incluindo os
+            ativos e inativos. As ações de gerenciamento serão adicionadas em uma
+            próxima etapa.
+          </p>
+        } @else {
+          <h1>Conheça os tipos disponíveis</h1>
+          <p>
+            Consulte as categorias disponíveis antes de abrir uma nova
+            solicitação e escolha o tipo mais adequado para sua necessidade.
+          </p>
+        }
+      </div>
+    </header>
+
+    <article class="types-card">
+      @if (isLoading()) {
+        <div class="empty-state">
+          <strong>Carregando tipos de requisição...</strong>
+          <p>Aguarde enquanto buscamos as categorias disponíveis.</p>
+        </div>
+      } @else if (errorMessage()) {
+        <div class="empty-state error">
+          <strong>Não foi possível carregar os dados</strong>
+          <p>{{ errorMessage() }}</p>
+        </div>
+      } @else if (!requestTypes().length) {
+        <div class="empty-state">
+          <strong>Nenhum tipo de requisição encontrado</strong>
+          <p>
+            Ainda não há tipos disponíveis para consulta.
+          </p>
+        </div>
+      } @else {
+        <div class="types-grid">
+          @for (type of requestTypes(); track type.id) {
+            <article class="type-card">
+              <div class="type-header">
+                <div>
+                  <span>Tipo #{{ type.id }}</span>
+                  <h2>{{ type.name }}</h2>
+                </div>
+
+                @if (isAnalyst()) {
+                  <strong [class.inactive]="!type.active">
+                    {{ type.active ? 'Ativo' : 'Inativo' }}
+                  </strong>
+                }
+              </div>
+
+              <p>
+                {{ type.description || 'Nenhuma descrição foi informada para este tipo.' }}
+              </p>
+            </article>
+          }
+        </div>
+      }
+    </article>
+  </section>
+</app-layout>
