@@ -27,6 +27,7 @@ export class RequestTypes {
   successMessage = signal('');
   
   editingRequestType = signal<RequestTypeResponse | null>(null);
+  changingStatusTypeId = signal<number | null>(null);
 
   formData: RequestTypeCreate = {
     name: '',
@@ -217,5 +218,81 @@ export class RequestTypes {
       name: '',
       description: '',
     };
+  }
+
+  onDisableRequestType(type: RequestTypeResponse): void {
+    if (!this.isAnalyst()) {
+      return;
+    }
+
+    const shouldDisable = window.confirm(
+      `Deseja desativar o tipo "${type.name}"?`,
+    );
+
+    if (!shouldDisable) {
+      return;
+    }
+
+    this.changingStatusTypeId.set(type.id);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.requestTypeService
+      .disableRequestType(type.id)
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Tipo de requisição desativado com sucesso.');
+
+          const currentUser = this.currentUser();
+
+          if (currentUser) {
+            this.loadRequestTypes(currentUser);
+          }
+
+          this.changingStatusTypeId.set(null);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
+          this.changingStatusTypeId.set(null);
+        },
+      });
+  }
+
+  onEnableRequestType(type: RequestTypeResponse): void {
+    if (!this.isAnalyst()) {
+      return;
+    }
+
+    const shouldEnable = window.confirm(
+      `Deseja reativar o tipo "${type.name}"?`,
+    );
+
+    if (!shouldEnable) {
+      return;
+    }
+
+    this.changingStatusTypeId.set(type.id);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.requestTypeService
+      .enableRequestType(type.id)
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Tipo de requisição reativado com sucesso.');
+
+          const currentUser = this.currentUser();
+
+          if (currentUser) {
+            this.loadRequestTypes(currentUser);
+          }
+
+          this.changingStatusTypeId.set(null);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
+          this.changingStatusTypeId.set(null);
+        },
+      });
   }
 }

@@ -142,6 +142,25 @@
                   <button type="button" (click)="onEditRequestType(type)">
                     Editar
                   </button>
+                  @if (type.active) {
+                    <button
+                      class="danger-action"
+                      type="button"
+                      [disabled]="changingStatusTypeId() === type.id"
+                      (click)="onDisableRequestType(type)"
+                    >
+                      {{ changingStatusTypeId() === type.id ? 'Desativando...' : 'Desativar' }}
+                    </button>
+                  } @else {
+                    <button
+                      class="success-action"
+                      type="button"
+                      [disabled]="changingStatusTypeId() === type.id"
+                      (click)="onEnableRequestType(type)"
+                    >
+                      {{ changingStatusTypeId() === type.id ? 'Reativando...' : 'Reativar' }}
+                    </button>
+                  }
                 </div>
               }
             </article>

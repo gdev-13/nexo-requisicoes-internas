@@ -269,7 +269,9 @@
 
 .type-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
+  gap: 10px;
   margin-top: auto;
   padding-top: 18px;
 }
@@ -287,6 +289,18 @@
 
 .type-actions button:hover {
   background: var(--color-surface);
+}
+
+.type-actions .danger-action {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: rgba(185, 28, 28, 0.18);
+}
+
+.type-actions .success-action {
+  color: #047857;
+  background: #d1fae5;
+  border-color: rgba(4, 120, 87, 0.18);
 }
 
 @media (max-width: 560px) {
