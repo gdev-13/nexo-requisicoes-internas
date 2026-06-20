@@ -46,3 +46,24 @@ class RequestHistory(Base):
     request = relationship("InternalRequest")
 
     user = relationship("User")
+
+    @property
+    def request_title(self) -> str | None:
+        if not self.request:
+            return None
+
+        return self.request.title
+
+    @property
+    def request_type_name(self) -> str | None:
+        if not self.request or not self.request.request_type:
+            return None
+
+        return self.request.request_type.name
+
+    @property
+    def user_name(self) -> str | None:
+        if not self.user:
+            return None
+
+        return self.user.name

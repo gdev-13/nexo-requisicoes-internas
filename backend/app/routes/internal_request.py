@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.db.database import get_db
 from app.dependencies.auth import get_current_analyst, get_current_user
@@ -117,7 +117,6 @@ def create_internal_request(
     )
 
     db.commit()
-    db.commit()
 
     return new_request
 
@@ -146,6 +145,24 @@ def list_all_requests(db: Session = Depends(get_db)):
         .order_by(InternalRequest.created_at.desc())
         .all()
     )
+
+
+@router.get("/history", response_model=list[RequestHistoryResponse])
+def list_general_request_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    query = db.query(RequestHistory).options(
+        joinedload(RequestHistory.request).joinedload(InternalRequest.request_type),
+        joinedload(RequestHistory.user),
+    )
+
+    if current_user.role != UserRole.ANALYST:
+        query = query.join(InternalRequest).filter(
+            InternalRequest.requester_id == current_user.id,
+        )
+
+    return query.order_by(RequestHistory.created_at.desc()).all()
 
 
 @router.get("/{request_id}", response_model=InternalRequestResponse)
