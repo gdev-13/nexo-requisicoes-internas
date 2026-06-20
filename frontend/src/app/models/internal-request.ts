@@ -36,7 +36,10 @@ export interface RequestStatusAction {
 export interface RequestHistoryResponse {
   id: number;
   request_id: number;
+  request_title: string | null;
+  request_type_name: string | null;
   user_id: number;
+  user_name: string | null;
   previous_status: RequestStatus | null;
   new_status: RequestStatus;
   comment: string | null;

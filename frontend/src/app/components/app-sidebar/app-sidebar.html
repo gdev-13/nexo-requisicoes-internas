@@ -70,7 +70,13 @@
     >
       Tipos de requisição
     </a>
-    <span class="sidebar-item disabled">Histórico</span>
+    <a
+      routerLink="/history"
+      routerLinkActive="active"
+      (click)="onCloseSidebar()"
+    >
+      Histórico
+    </a>
 
   </nav>
     <div class="sidebar-user">

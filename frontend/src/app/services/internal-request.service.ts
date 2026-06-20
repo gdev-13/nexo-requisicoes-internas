@@ -38,6 +38,10 @@ export class InternalRequestService {
     return this.http.get<RequestHistoryResponse[]>(`${this.apiUrl}/${id}/history`);
   }
 
+  getGeneralHistory(): Observable<RequestHistoryResponse[]> {
+    return this.http.get<RequestHistoryResponse[]>(`${this.apiUrl}/history`);
+  }
+
   startAnalysis(
     id: number,
     data: RequestStatusAction,

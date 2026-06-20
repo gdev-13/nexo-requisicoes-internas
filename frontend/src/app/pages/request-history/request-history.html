@@ -1,0 +1,76 @@
+<app-layout (currentUserLoaded)="setCurrentUser($event)">
+  <section class="request-history-page">
+    <header class="page-header">
+      <div>
+        <span>Histórico</span>
+
+        @if (isAnalyst()) {
+          <h1>Histórico geral das requisições</h1>
+          <p>
+            Acompanhe as movimentações realizadas nas requisições internas do
+            sistema.
+          </p>
+        } @else {
+          <h1>Histórico das suas requisições</h1>
+          <p>
+            Consulte as movimentações registradas nas solicitações abertas por
+            você.
+          </p>
+        }
+      </div>
+    </header>
+
+    <article class="history-card">
+      @if (isLoading()) {
+        <div class="empty-state">
+          <strong>Carregando histórico...</strong>
+          <p>Aguarde enquanto buscamos as movimentações registradas.</p>
+        </div>
+      } @else if (errorMessage()) {
+        <div class="empty-state error">
+          <strong>Não foi possível carregar os dados</strong>
+          <p>{{ errorMessage() }}</p>
+        </div>
+      } @else if (!history().length) {
+        <div class="empty-state">
+          <strong>Nenhuma movimentação encontrada</strong>
+          <p>
+            Quando houver alterações de status nas requisições, elas aparecerão
+            aqui.
+          </p>
+        </div>
+      } @else {
+        <div class="history-list">
+          @for (item of history(); track item.id) {
+            <article class="history-item">
+              <div class="timeline-marker"></div>
+
+              <div class="history-content">
+                <div class="history-header">
+                  <div>
+                    <span>Requisição #{{ item.request_id }}</span>
+                    <h2>{{ item.request_title || 'Requisição sem título' }}</h2>
+                  </div>
+
+                  <a [routerLink]="['/requests', item.request_id]">Ver detalhes</a>
+                </div>
+
+                <strong>{{ getHistoryTitle(item) }}</strong>
+
+                <p>
+                  {{ item.comment || 'Sem comentário informado.' }}
+                </p>
+
+                <div class="history-meta">
+                  <span>Tipo: {{ item.request_type_name || 'Tipo não informado' }}</span>
+                  <span>Responsável: {{ item.user_name || 'Usuário não informado' }}</span>
+                  <span>{{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </article>
+  </section>
+</app-layout>

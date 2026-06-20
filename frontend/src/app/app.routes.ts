@@ -10,6 +10,7 @@ import { MyRequests } from './pages/my-requests/my-requests';
 import { RequestDetails } from './pages/request-details/request-details';
 import { RequestTypes } from './pages/request-types/request-types';
 import { AllRequests } from './pages/all-requests/all-requests';
+import { RequestHistory } from './pages/request-history/request-history';
 
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
@@ -60,6 +61,11 @@ export const routes: Routes = [
     path: 'requests',
     component: AllRequests,
     canActivate: [analystGuard]
+  },
+  {
+    path: 'history',
+    component: RequestHistory,
+    canActivate: [authGuard]
   },
   {
     path: '**',
