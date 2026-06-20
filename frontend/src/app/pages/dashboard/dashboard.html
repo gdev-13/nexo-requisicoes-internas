@@ -14,29 +14,35 @@
     }
   </header>
 
+  @if (errorMessage()) {
+    <p class="dashboard-alert">{{ errorMessage() }}</p>
+  }
+
   <section class="summary-grid">
     <article class="summary-card">
-      <span>Minhas requisições</span>
-      <strong>—</strong>
-      <p>Dados serão exibidos após a integração com a API.</p>
+      <span>{{ isAnalyst() ? 'Todas as requisições' : 'Minhas requisições' }}</span>
+      <strong>{{ isLoading() ? '—' : getTotalRequests() }}</strong>
+      <p>
+        {{ isAnalyst() ? 'Solicitações cadastradas no sistema.' : 'Solicitações abertas por você.' }}
+      </p>
     </article>
 
     <article class="summary-card">
       <span>Em análise</span>
-      <strong>—</strong>
-      <p>Dados serão exibidos após a integração com a API.</p>
+      <strong>{{ isLoading() ? '—' : getRequestsInAnalysis() }}</strong>
+      <p>Requisições que estão sendo analisadas.</p>
     </article>
 
     <article class="summary-card">
       <span>Concluídas</span>
-      <strong>—</strong>
-      <p>Dados serão exibidos após a integração com a API.</p>
+      <strong>{{ isLoading() ? '—' : getCompletedRequests() }}</strong>
+      <p>Requisições finalizadas no fluxo.</p>
     </article>
 
     <article class="summary-card">
       <span>Tipos ativos</span>
-      <strong>—</strong>
-      <p>Dados serão exibidos após a integração com a API.</p>
+      <strong>{{ isLoading() ? '—' : activeRequestTypesCount() }}</strong>
+      <p>Tipos disponíveis para abertura de solicitações.</p>
     </article>
   </section>
 
@@ -45,17 +51,53 @@
       <div class="panel-header">
         <div>
           <span>Requisições</span>
-          <h2>Últimas solicitações</h2>
+          <h2>{{ isAnalyst() ? 'Últimas solicitações' : 'Suas últimas solicitações' }}</h2>
         </div>
+
+        <a [routerLink]="isAnalyst() ? '/requests' : '/requests/my'">Ver todas</a>
       </div>
 
       <div class="panel-body">
-        <div class="empty-state">
-          <strong>Nenhuma requisição carregada</strong>
-          <p>
-            As solicitações aparecerão aqui quando o frontend estiver integrado ao backend.
-          </p>
-        </div>
+        @if (isLoading()) {
+          <div class="empty-state">
+            <strong>Carregando requisições...</strong>
+            <p>Aguarde enquanto buscamos os dados do painel.</p>
+          </div>
+        } @else if (!getLatestRequests().length) {
+          <div class="empty-state">
+            <strong>Nenhuma requisição encontrada</strong>
+            <p>
+              Quando houver solicitações cadastradas, elas aparecerão aqui.
+            </p>
+          </div>
+        } @else {
+          <div class="dashboard-list">
+            @for (request of getLatestRequests(); track request.id) {
+              <article class="dashboard-list-item">
+                <div class="item-header">
+                  <div>
+                    <span>Requisição #{{ request.id }}</span>
+                    <h3>{{ request.title }}</h3>
+                  </div>
+
+                  <strong class="status-badge" [class]="getStatusClass(request.status)">
+                    {{ getStatusLabel(request.status) }}
+                  </strong>
+                </div>
+
+                <p>{{ request.description }}</p>
+
+                <div class="item-meta">
+                  <span>Tipo: {{ request.request_type_name || 'Tipo não informado' }}</span>
+                  <span>Prioridade: {{ getPriorityLabel(request.priority) }}</span>
+                  <span>{{ request.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+
+                <a [routerLink]="['/requests', request.id]">Ver detalhes</a>
+              </article>
+            }
+          </div>
+        }
       </div>
     </article>
 
@@ -65,15 +107,36 @@
           <span>Histórico</span>
           <h2>Movimentações recentes</h2>
         </div>
+
+        <a routerLink="/history">Ver histórico</a>
       </div>
 
       <div class="panel-body">
-        <div class="empty-state">
-          <strong>Nenhuma movimentação carregada</strong>
-          <p>
-            O histórico será exibido após a busca dos dados reais da API.
-          </p>
-        </div>
+        @if (isLoading()) {
+          <div class="empty-state">
+            <strong>Carregando histórico...</strong>
+            <p>Aguarde enquanto buscamos as movimentações recentes.</p>
+          </div>
+        } @else if (!getLatestHistory().length) {
+          <div class="empty-state">
+            <strong>Nenhuma movimentação encontrada</strong>
+            <p>
+              As alterações de status aparecerão aqui quando forem registradas.
+            </p>
+          </div>
+        } @else {
+          <div class="history-preview-list">
+            @for (item of getLatestHistory(); track item.id) {
+              <article class="history-preview-item">
+                <span>Requisição #{{ item.request_id }}</span>
+                <h3>{{ item.request_title || 'Requisição sem título' }}</h3>
+                <strong>{{ getHistoryTitle(item) }}</strong>
+                <p>{{ item.comment || 'Sem comentário informado.' }}</p>
+                <small>{{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}</small>
+              </article>
+            }
+          </div>
+        }
       </div>
     </article>
   </section>
