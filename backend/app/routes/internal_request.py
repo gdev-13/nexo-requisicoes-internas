@@ -80,6 +80,12 @@ def create_internal_request(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if current_user.role != UserRole.REQUESTER:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas requisitantes podem abrir requisições.",
+        )
+    
     request_type = (
         db.query(RequestType)
         .filter(

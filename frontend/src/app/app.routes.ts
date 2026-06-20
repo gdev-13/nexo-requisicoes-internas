@@ -15,6 +15,7 @@ import { RequestHistory } from './pages/request-history/request-history';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 import { analystGuard } from './guards/analyst.guard';
+import { requesterGuard } from './guards/requester.guard';
 
 export const routes: Routes = [
   {
@@ -40,12 +41,12 @@ export const routes: Routes = [
   {
     path: 'requests/new',
     component: RequestCreate,
-    canActivate: [authGuard],
+    canActivate: [requesterGuard],
   },
   {
     path: 'requests/my',
     component: MyRequests,
-    canActivate: [authGuard]
+    canActivate: [requesterGuard]
   },
   {
     path: 'requests/:id',
