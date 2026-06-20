@@ -29,6 +29,8 @@ export class RequestDetails implements OnInit {
   currentUser = signal<UserResponse | null>(null);
   isCanceling = signal(false);  
 
+  isStartingAnalysis = signal(false);
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly internalRequestService: InternalRequestService,
@@ -72,6 +74,54 @@ export class RequestDetails implements OnInit {
     }
 
     return `${this.getStatusLabel(item.previous_status)} → ${this.getStatusLabel(item.new_status)}`;
+  }
+
+  canStartAnalysis(): boolean {
+    const request = this.request();
+
+    if (!request || !this.isAnalyst()) {
+      return false;
+    }
+
+    return request.status === 'SOLICITADA';
+  }
+
+  onStartAnalysis(): void {
+    const request = this.request();
+
+    if (!request || !this.canStartAnalysis()) {
+      return;
+    }
+
+    const shouldStart = window.confirm(
+      'Deseja iniciar a análise desta requisição?',
+    );
+
+    if (!shouldStart) {
+      return;
+    }
+
+    this.isStartingAnalysis.set(true);
+    this.errorMessage.set('');
+
+    this.internalRequestService
+      .startAnalysis(request.id, {
+        comment: 'Análise iniciada pelo analista.',
+      })
+      .pipe(
+        finalize(() => {
+          this.isStartingAnalysis.set(false);
+        }),
+      )
+      .subscribe({
+        next: (updatedRequest) => {
+          this.request.set(updatedRequest);
+          this.loadRequestHistory(updatedRequest.id);
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível iniciar a análise da requisição.');
+        },
+      });
   }
 
   setCurrentUser(user: UserResponse | null): void {

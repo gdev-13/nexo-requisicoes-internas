@@ -41,6 +41,17 @@
                 {{ getStatusLabel(request()!.status) }}
             </span>
 
+            @if (canStartAnalysis()) {
+              <button
+                class="primary-action"
+                type="button"
+                [disabled]="isStartingAnalysis()"
+                (click)="onStartAnalysis()"
+              >
+                {{ isStartingAnalysis() ? 'Iniciando...' : 'Iniciar análise' }}
+              </button>
+            }
+
             @if (canCancelRequest()) {
                 <button
                 class="danger-action"
