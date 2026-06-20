@@ -33,6 +33,7 @@ export class RequestDetails implements OnInit {
 
   isApproving = signal(false);
   isRejecting = signal(false);
+  isConcluding = signal(false);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -321,6 +322,55 @@ export class RequestDetails implements OnInit {
         },
         error: () => {
           this.errorMessage.set('Não foi possível recusar a requisição.');
+        },
+      }
+    );
+  }
+
+  canConcludeRequest(): boolean {
+    const request = this.request();
+
+    if (!request || !this.isAnalyst()) {
+      return false;
+    }
+
+    return request.status === 'APROVADA';
+  }
+
+  onConcludeRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canConcludeRequest()) {
+      return;
+    }
+
+    const shouldConclude = window.confirm(
+      'Deseja concluir esta requisição?',
+    );
+
+    if (!shouldConclude) {
+      return;
+    }
+
+    this.isConcluding.set(true);
+    this.errorMessage.set('');
+
+    this.internalRequestService
+      .concludeRequest(request.id, {
+        comment: 'Requisição concluída pelo analista.',
+      })
+      .pipe(
+        finalize(() => {
+          this.isConcluding.set(false);
+        }),
+      )
+      .subscribe({
+        next: (updatedRequest) => {
+          this.request.set(updatedRequest);
+          this.loadRequestHistory(updatedRequest.id);
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível concluir a requisição.');
         },
       }
     );

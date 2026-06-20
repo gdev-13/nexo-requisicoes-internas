@@ -72,6 +72,17 @@
               </button>
             }
 
+            @if (canConcludeRequest()) {
+              <button
+                class="primary-action"
+                type="button"
+                [disabled]="isConcluding()"
+                (click)="onConcludeRequest()"
+              >
+                {{ isConcluding() ? 'Concluindo...' : 'Concluir requisição' }}
+              </button>
+            }
+
             @if (canCancelRequest()) {
                 <button
                 class="danger-action"
