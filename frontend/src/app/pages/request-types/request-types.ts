@@ -5,7 +5,11 @@ import { finalize } from 'rxjs';
 
 import { AppLayout } from '../../components/app-layout/app-layout';
 import { UserResponse } from '../../models/auth';
-import { RequestTypeCreate, RequestTypeResponse } from '../../models/request-type';
+import { 
+  RequestTypeCreate,
+  RequestTypeResponse,
+  RequestTypeUpdate
+} from '../../models/request-type';
 import { RequestTypeService } from '../../services/request-type.service';
 
 @Component({
@@ -21,6 +25,8 @@ export class RequestTypes {
   isSubmitting = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
+  
+  editingRequestType = signal<RequestTypeResponse | null>(null);
 
   formData: RequestTypeCreate = {
     name: '',
@@ -55,38 +61,14 @@ export class RequestTypes {
       return;
     }
 
-    this.isSubmitting.set(true);
+    const editingRequestType = this.editingRequestType();
 
-    const requestData: RequestTypeCreate = {
-      name: this.formData.name.trim(),
-      description: this.formData.description?.trim() || null,
-    };
+    if (editingRequestType) {
+      this.updateRequestType(editingRequestType.id, form);
+      return;
+    }
 
-    this.requestTypeService
-      .createRequestType(requestData)
-      .pipe(
-        finalize(() => {
-          this.isSubmitting.set(false);
-        }),
-      )
-      .subscribe({
-        next: () => {
-          this.successMessage.set('Tipo de requisição cadastrado com sucesso.');
-          form.resetForm({
-            name: '',
-            description: '',
-          });
-
-          const currentUser = this.currentUser();
-
-          if (currentUser) {
-            this.loadRequestTypes(currentUser);
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
-        },
-      });
+    this.createRequestType(form);
   }
 
   private loadRequestTypes(user: UserResponse): void {
@@ -126,5 +108,114 @@ export class RequestTypes {
     }
 
     return 'Não foi possível cadastrar o tipo de requisição.';
+  }
+
+  private createRequestType(form: NgForm): void {
+    this.isSubmitting.set(true);
+
+    const requestData: RequestTypeCreate = {
+      name: this.formData.name.trim(),
+      description: this.formData.description?.trim() || null,
+    };
+
+    this.requestTypeService
+      .createRequestType(requestData)
+      .pipe(
+        finalize(() => {
+          this.isSubmitting.set(false);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Tipo de requisição cadastrado com sucesso.');
+          form.resetForm({
+            name: '',
+            description: '',
+          });
+
+          const currentUser = this.currentUser();
+
+          if (currentUser) {
+            this.loadRequestTypes(currentUser);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
+        },
+      }
+    );
+  }
+
+  private updateRequestType(id: number, form: NgForm): void {
+    this.isSubmitting.set(true);
+
+    const requestData: RequestTypeUpdate = {
+      name: this.formData.name.trim(),
+      description: this.formData.description?.trim() || null,
+    };
+
+    this.requestTypeService
+      .updateRequestType(id, requestData)
+      .pipe(
+        finalize(() => {
+          this.isSubmitting.set(false);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Tipo de requisição atualizado com sucesso.');
+          this.editingRequestType.set(null);
+
+          form.resetForm({
+            name: '',
+            description: '',
+          });
+
+          const currentUser = this.currentUser();
+
+          if (currentUser) {
+            this.loadRequestTypes(currentUser);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
+        },
+      }
+    );
+  }
+
+  isEditing(): boolean {
+    return this.editingRequestType() !== null;
+  }
+
+  onEditRequestType(type: RequestTypeResponse): void {
+    if (!this.isAnalyst()) {
+      return;
+    }
+
+    this.editingRequestType.set(type);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.formData = {
+      name: type.name,
+      description: type.description || '',
+    };
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+
+  onCancelEdit(): void {
+    this.editingRequestType.set(null);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.formData = {
+      name: '',
+      description: '',
+    };
   }
 }

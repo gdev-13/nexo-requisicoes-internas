@@ -25,8 +25,10 @@
       <article class="form-card">
         <div class="form-header">
           <div>
-            <span>Novo tipo</span>
-            <h2>Cadastrar tipo de requisição</h2>
+            <span>{{ isEditing() ? 'Editar tipo' : 'Novo tipo' }}</span>
+            <h2>
+              {{ isEditing() ? 'Atualizar tipo de requisição' : 'Cadastrar tipo de requisição' }}
+            </h2>
           </div>
         </div>
 
@@ -74,8 +76,23 @@
           </label>
 
           <div class="form-actions">
+            @if (isEditing()) {
+              <button
+                class="secondary-action"
+                type="button"
+                [disabled]="isSubmitting()"
+                (click)="onCancelEdit()"
+              >
+                Cancelar edição
+              </button>
+            }
+
             <button type="submit" [disabled]="isSubmitting()">
-              {{ isSubmitting() ? 'Cadastrando...' : 'Cadastrar tipo' }}
+              @if (isEditing()) {
+                {{ isSubmitting() ? 'Salvando...' : 'Salvar alterações' }}
+              } @else {
+                {{ isSubmitting() ? 'Cadastrando...' : 'Cadastrar tipo' }}
+              }
             </button>
           </div>
         </form>
@@ -120,6 +137,13 @@
               <p>
                 {{ type.description || 'Nenhuma descrição foi informada para este tipo.' }}
               </p>
+              @if (isAnalyst()) {
+                <div class="type-actions">
+                  <button type="button" (click)="onEditRequestType(type)">
+                    Editar
+                  </button>
+                </div>
+              }
             </article>
           }
         </div>
