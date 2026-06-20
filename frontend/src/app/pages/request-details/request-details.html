@@ -1,0 +1,114 @@
+<app-layout>
+  <section class="request-details-page">
+    @if (isLoading()) {
+      <article class="empty-state">
+        <strong>Carregando detalhes...</strong>
+        <p>Aguarde enquanto buscamos as informações da requisição.</p>
+      </article>
+    } @else if (errorMessage()) {
+      <article class="empty-state error">
+        <strong>Não foi possível carregar os dados</strong>
+        <p>{{ errorMessage() }}</p>
+        <a routerLink="/requests/my">Voltar para minhas requisições</a>
+      </article>
+    } @else if (request()) {
+      <header class="page-header">
+        <div>
+          <span>Requisição #{{ request()?.id }}</span>
+          <h1>{{ request()?.title }}</h1>
+          <p>
+            Consulte os detalhes da solicitação, sua prioridade, situação atual
+            e histórico de movimentações.
+          </p>
+        </div>
+
+        <a routerLink="/requests/my">Voltar</a>
+      </header>
+
+      <section class="details-grid">
+        <article class="details-card main-card">
+          <div class="card-header">
+            <div>
+              <span>Informações</span>
+              <h2>Dados da requisição</h2>
+            </div>
+
+            <span
+              class="status-badge"
+              [class]="getStatusClass(request()!.status)"
+            >
+              {{ getStatusLabel(request()!.status) }}
+            </span>
+          </div>
+
+          <p class="description">{{ request()?.description }}</p>
+
+          <div class="info-grid">
+            <div>
+              <span>Tipo</span>
+              <strong>{{ request()?.request_type_name || 'Tipo não informado' }}</strong>
+            </div>
+
+            <div>
+              <span>Prioridade</span>
+              <strong>{{ getPriorityLabel(request()!.priority) }}</strong>
+            </div>
+
+            <div>
+              <span>Criada em</span>
+              <strong>{{ request()?.created_at | date: 'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+
+            <div>
+              <span>Atualizada em</span>
+              <strong>{{ request()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+
+            @if (request()?.closed_at) {
+              <div>
+                <span>Encerrada em</span>
+                <strong>{{ request()?.closed_at | date: 'dd/MM/yyyy HH:mm' }}</strong>
+              </div>
+            }
+          </div>
+        </article>
+
+        <article class="details-card history-card">
+          <div class="card-header">
+            <div>
+              <span>Histórico</span>
+              <h2>Movimentações</h2>
+            </div>
+          </div>
+
+          @if (!history().length) {
+            <div class="empty-history">
+              <strong>Nenhuma movimentação registrada</strong>
+              <p>O histórico aparecerá aqui quando houver alterações de status.</p>
+            </div>
+          } @else {
+            <div class="history-list">
+              @for (item of history(); track item.id) {
+                <article class="history-item">
+                  <span></span>
+
+                  <div>
+                    <strong>{{ getHistoryTitle(item) }}</strong>
+
+                    @if (item.comment) {
+                      <p>{{ item.comment }}</p>
+                    } @else {
+                      <p>Sem comentário informado.</p>
+                    }
+
+                    <small>{{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}</small>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </article>
+      </section>
+    }
+  </section>
+</app-layout>

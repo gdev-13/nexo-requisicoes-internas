@@ -7,6 +7,7 @@ import { NotFound } from './pages/not-found/not-found';
 import { Register } from './pages/register/register';
 import { RequestCreate } from './pages/request-create/request-create';
 import { MyRequests } from './pages/my-requests/my-requests';
+import { RequestDetails } from './pages/request-details/request-details';
 
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
@@ -40,6 +41,11 @@ export const routes: Routes = [
   {
     path: 'requests/my',
     component: MyRequests,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'requests/:id',
+    component: RequestDetails,
     canActivate: [authGuard]
   },
   {

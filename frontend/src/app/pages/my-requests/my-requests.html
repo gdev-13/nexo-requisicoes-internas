@@ -51,10 +51,16 @@
 
               <p>{{ request.description }}</p>
 
-              <div class="request-meta">
-                <span>Prioridade: {{ getPriorityLabel(request.priority) }}</span>
-                <span>Tipo: {{ request.request_type_name || 'Tipo não informado' }}</span>
-                <span>Criada em: {{ request.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+              <div class="request-footer">
+                <div class="request-meta">
+                  <span>Prioridade: {{ getPriorityLabel(request.priority) }}</span>
+                  <span>Tipo: {{ request.request_type_name || 'Tipo não informado' }}</span>
+                  <span>Criada em: {{ request.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+
+                <div class="request-actions">
+                  <a [routerLink]="['/requests', request.id]">Ver detalhes</a>
+                </div>
               </div>
             </article>
           }
