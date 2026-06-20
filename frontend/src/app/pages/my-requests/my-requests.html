@@ -1,0 +1,65 @@
+<app-layout>
+  <section class="my-requests-page">
+    <header class="page-header">
+      <div>
+        <span>Minhas requisições</span>
+        <h1>Acompanhe suas solicitações</h1>
+        <p>
+          Visualize as requisições que você abriu e acompanhe o andamento de
+          cada uma dentro do fluxo de análise.
+        </p>
+      </div>
+
+      <a routerLink="/requests/new">Nova requisição</a>
+    </header>
+
+    <article class="requests-card">
+      @if (isLoading()) {
+        <div class="empty-state">
+          <strong>Carregando requisições...</strong>
+          <p>Aguarde enquanto buscamos suas solicitações.</p>
+        </div>
+      } @else if (errorMessage()) {
+        <div class="empty-state error">
+          <strong>Não foi possível carregar os dados</strong>
+          <p>{{ errorMessage() }}</p>
+        </div>
+      } @else if (!requests().length) {
+        <div class="empty-state">
+          <strong>Nenhuma requisição encontrada</strong>
+          <p>
+            Quando você abrir uma nova solicitação, ela aparecerá nesta lista
+            para acompanhamento.
+          </p>
+
+          <a routerLink="/requests/new">Abrir primeira requisição</a>
+        </div>
+      } @else {
+        <div class="requests-list">
+          @for (request of requests(); track request.id) {
+            <article class="request-item">
+              <div class="request-main">
+                <div>
+                  <span class="request-code">Requisição #{{ request.id }}</span>
+                  <h2>{{ request.title }}</h2>
+                </div>
+
+                <span class="status-badge" [class]="getStatusClass(request.status)">
+                  {{ getStatusLabel(request.status) }}
+                </span>
+              </div>
+
+              <p>{{ request.description }}</p>
+
+              <div class="request-meta">
+                <span>Prioridade: {{ getPriorityLabel(request.priority) }}</span>
+                <span>Tipo: #{{ request.request_type_id }}</span>
+                <span>Criada em: {{ request.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </article>
+  </section>
+</app-layout>

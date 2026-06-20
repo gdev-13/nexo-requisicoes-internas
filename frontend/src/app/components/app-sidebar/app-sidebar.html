@@ -37,7 +37,13 @@
       Dashboard
     </a>
 
-    <span class="sidebar-item disabled">Minhas requisições</span>
+    <a
+      routerLink="/requests/my"
+      routerLinkActive="active"
+      (click)="onCloseSidebar()"
+    >
+      Minhas requisições
+    </a>
     <a
       routerLink="/requests/new"
       routerLinkActive="active"
