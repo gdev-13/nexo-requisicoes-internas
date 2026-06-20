@@ -52,6 +52,26 @@
               </button>
             }
 
+            @if (canReviewRequest()) {
+              <button
+                class="success-action"
+                type="button"
+                [disabled]="isApproving() || isRejecting()"
+                (click)="onApproveRequest()"
+              >
+                {{ isApproving() ? 'Aprovando...' : 'Aprovar' }}
+              </button>
+
+              <button
+                class="danger-action"
+                type="button"
+                [disabled]="isApproving() || isRejecting()"
+                (click)="onRejectRequest()"
+              >
+                {{ isRejecting() ? 'Recusando...' : 'Recusar' }}
+              </button>
+            }
+
             @if (canCancelRequest()) {
                 <button
                 class="danger-action"

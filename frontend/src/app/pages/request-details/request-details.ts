@@ -31,6 +31,9 @@ export class RequestDetails implements OnInit {
 
   isStartingAnalysis = signal(false);
 
+  isApproving = signal(false);
+  isRejecting = signal(false);
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly internalRequestService: InternalRequestService,
@@ -229,5 +232,97 @@ export class RequestDetails implements OnInit {
           this.errorMessage.set('Não foi possível carregar os detalhes da requisição.');
         },
     });
+  }
+
+  canReviewRequest(): boolean {
+    const request = this.request();
+
+    if (!request || !this.isAnalyst()) {
+      return false;
+    }
+
+    return request.status === 'EM_ANALISE';
+  }
+
+  onApproveRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canReviewRequest()) {
+      return;
+    }
+
+    const shouldApprove = window.confirm(
+      'Deseja aprovar esta requisição?',
+    );
+
+    if (!shouldApprove) {
+      return;
+    }
+
+    this.isApproving.set(true);
+    this.errorMessage.set('');
+
+    this.internalRequestService
+      .approveRequest(request.id, {
+        comment: 'Requisição aprovada pelo analista.',
+      })
+      .pipe(
+        finalize(() => {
+          this.isApproving.set(false);
+        }),
+      )
+      .subscribe({
+        next: (updatedRequest) => {
+          this.request.set(updatedRequest);
+          this.loadRequestHistory(updatedRequest.id);
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível aprovar a requisição.');
+        },
+      });
+  }
+
+  onRejectRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canReviewRequest()) {
+      return;
+    }
+
+    const comment = window.prompt(
+      'Informe a justificativa da recusa:',
+    );
+
+    if (comment === null) {
+      return;
+    }
+
+    if (!comment.trim()) {
+      this.errorMessage.set('Informe uma justificativa para recusar a requisição.');
+      return;
+    }
+
+    this.isRejecting.set(true);
+    this.errorMessage.set('');
+
+    this.internalRequestService
+      .rejectRequest(request.id, {
+        comment: comment.trim(),
+      })
+      .pipe(
+        finalize(() => {
+          this.isRejecting.set(false);
+        }),
+      )
+      .subscribe({
+        next: (updatedRequest) => {
+          this.request.set(updatedRequest);
+          this.loadRequestHistory(updatedRequest.id);
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível recusar a requisição.');
+        },
+      }
+    );
   }
 }

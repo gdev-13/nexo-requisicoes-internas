@@ -275,6 +275,26 @@
   opacity: 0.7;
 }
 
+.success-action {
+  min-height: 38px;
+  padding: 0 14px;
+  color: #047857;
+  background: #d1fae5;
+  border: 1px solid rgba(4, 120, 87, 0.18);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.success-action:hover:not(:disabled) {
+  filter: brightness(0.98);
+}
+
+.success-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 @media (max-width: 1100px) {
   .details-grid {
     grid-template-columns: 1fr;
