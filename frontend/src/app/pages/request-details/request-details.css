@@ -85,6 +85,32 @@
   letter-spacing: -0.04em;
 }
 
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.danger-action {
+  min-height: 38px;
+  padding: 0 14px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border: 1px solid rgba(185, 28, 28, 0.18);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.danger-action:hover:not(:disabled) {
+  filter: brightness(0.98);
+}
+
+.danger-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .status-badge {
   flex: 0 0 auto;
   padding: 8px 12px;

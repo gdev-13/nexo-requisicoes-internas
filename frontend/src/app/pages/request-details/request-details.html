@@ -1,4 +1,4 @@
-<app-layout>
+<app-layout (currentUserLoaded)="setCurrentUser($event)">
   <section class="request-details-page">
     @if (isLoading()) {
       <article class="empty-state">
@@ -33,12 +33,25 @@
               <h2>Dados da requisição</h2>
             </div>
 
+            <div class="card-actions">
             <span
-              class="status-badge"
-              [class]="getStatusClass(request()!.status)"
+                class="status-badge"
+                [class]="getStatusClass(request()!.status)"
             >
-              {{ getStatusLabel(request()!.status) }}
+                {{ getStatusLabel(request()!.status) }}
             </span>
+
+            @if (canCancelRequest()) {
+                <button
+                class="danger-action"
+                type="button"
+                [disabled]="isCanceling()"
+                (click)="onCancelRequest()"
+                >
+                {{ isCanceling() ? 'Cancelando...' : 'Cancelar requisição' }}
+                </button>
+            }
+            </div>
           </div>
 
           <p class="description">{{ request()?.description }}</p>

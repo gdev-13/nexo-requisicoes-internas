@@ -11,6 +11,7 @@ import {
   RequestStatus,
 } from '../../models/internal-request';
 import { InternalRequestService } from '../../services/internal-request.service';
+import { UserResponse } from '../../models/auth';
 
 @Component({
   selector: 'app-request-details',
@@ -24,6 +25,9 @@ export class RequestDetails implements OnInit {
 
   isLoading = signal(true);
   errorMessage = signal('');
+
+  currentUser = signal<UserResponse | null>(null);
+  isCanceling = signal(false);  
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -68,6 +72,70 @@ export class RequestDetails implements OnInit {
     }
 
     return `${this.getStatusLabel(item.previous_status)} → ${this.getStatusLabel(item.new_status)}`;
+  }
+
+  setCurrentUser(user: UserResponse | null): void {
+    this.currentUser.set(user);
+  }
+
+  isRequester(): boolean {
+    return this.currentUser()?.role === 'REQUESTER';
+  }
+
+  canCancelRequest(): boolean {
+    const request = this.request();
+
+    if (!request || !this.isRequester()) {
+      return false;
+    }
+
+    return request.status === 'SOLICITADA' || request.status === 'EM_ANALISE';
+  }
+
+  onCancelRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canCancelRequest()) {
+      return;
+    }
+
+    const shouldCancel = window.confirm(
+      'Tem certeza que deseja cancelar esta requisição?',
+    );
+
+    if (!shouldCancel) {
+      return;
+    }
+
+    this.isCanceling.set(true);
+    this.errorMessage.set('');
+
+    this.internalRequestService
+      .cancelRequest(request.id, {
+        comment: 'Requisição cancelada pelo solicitante.',
+      })
+      .pipe(
+        finalize(() => {
+          this.isCanceling.set(false);
+        }),
+      )
+      .subscribe({
+        next: (updatedRequest) => {
+          this.request.set(updatedRequest);
+          this.loadRequestHistory(updatedRequest.id);
+        },
+        error: () => {
+          this.errorMessage.set('Não foi possível cancelar a requisição.');
+        },
+      });
+  }
+
+  private loadRequestHistory(requestId: number): void {
+    this.internalRequestService.getRequestHistory(requestId).subscribe({
+      next: (history) => {
+        this.history.set(history);
+      },
+    });
   }
 
   private loadRequestDetails(): void {
