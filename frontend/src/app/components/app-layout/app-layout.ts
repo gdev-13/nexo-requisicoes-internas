@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -14,6 +14,9 @@ import { AppSidebar } from '../app-sidebar/app-sidebar';
   styleUrl: './app-layout.css',
 })
 export class AppLayout implements OnInit {
+
+  @Output() currentUserLoaded = new EventEmitter<UserResponse | null>();
+
   isSidebarOpen = false;
 
   isLoadingUser = signal(true);
@@ -48,8 +51,10 @@ export class AppLayout implements OnInit {
       .subscribe({
         next: (user) => {
           this.currentUser.set(user);
+          this.currentUserLoaded.emit(user);
         },
         error: () => {
+          this.currentUserLoaded.emit(null);
           this.authStorageService.clearToken();
           this.router.navigate(['/login']);
         },

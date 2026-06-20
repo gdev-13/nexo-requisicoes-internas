@@ -40,4 +40,12 @@ export class AppSidebar {
 
     return roleLabels[role];
   }
+
+  isRequester(): boolean {
+    return this.currentUser?.role === 'REQUESTER';
+  }
+
+  isAnalyst(): boolean {
+    return this.currentUser?.role === 'ANALYST';
+  }
 }

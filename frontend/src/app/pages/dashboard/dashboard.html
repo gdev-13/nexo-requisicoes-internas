@@ -1,4 +1,4 @@
-<app-layout>
+<app-layout (currentUserLoaded)="setCurrentUser($event)">
   <header class="dashboard-header">
     <div>
       <span>Painel inicial</span>
@@ -9,7 +9,9 @@
       </p>
     </div>
 
-    <a class="primary-action" routerLink="/requests/new">Nova requisição</a>
+    @if (isRequester()) {
+      <a class="primary-action" routerLink="/requests/new">Nova requisição</a>
+    }
   </header>
 
   <section class="summary-grid">

@@ -36,22 +36,25 @@
     >
       Dashboard
     </a>
-
-    <a
-      routerLink="/requests/my"
-      routerLinkActive="active"
-      (click)="onCloseSidebar()"
-    >
-      Minhas requisições
-    </a>
-    <a
-      routerLink="/requests/new"
-      routerLinkActive="active"
-      (click)="onCloseSidebar()"
-    >
-      Nova requisição
-    </a>
-    <span class="sidebar-item disabled">Todas as requisições</span>
+    @if (isRequester()) {
+      <a
+        routerLink="/requests/my"
+        routerLinkActive="active"
+        (click)="onCloseSidebar()"
+      >
+        Minhas requisições
+      </a>
+      <a
+        routerLink="/requests/new"
+        routerLinkActive="active"
+        (click)="onCloseSidebar()"
+      >
+        Nova requisição
+      </a>
+    }
+    @if (isAnalyst()) {
+      <span class="sidebar-item disabled">Todas as requisições</span>
+    }
     <span class="sidebar-item disabled">Tipos de requisição</span>
     <span class="sidebar-item disabled">Histórico</span>
 
