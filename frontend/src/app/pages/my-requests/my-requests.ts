@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -13,7 +14,7 @@ import { InternalRequestService } from '../../services/internal-request.service'
 
 @Component({
   selector: 'app-my-requests',
-  imports: [AppLayout, RouterLink, DatePipe],
+  imports: [AppLayout, RouterLink, DatePipe, FormsModule],
   templateUrl: './my-requests.html',
   styleUrl: './my-requests.css',
 })
@@ -21,6 +22,64 @@ export class MyRequests implements OnInit {
   requests = signal<InternalRequestResponse[]>([]);
   isLoading = signal(true);
   errorMessage = signal('');
+  searchTerm = signal('');
+  selectedStatus = signal<RequestStatus | ''>('');
+  selectedPriority = signal<RequestPriority | ''>('');
+  selectedType = signal('');
+
+  requestTypeNames = computed(() => {
+    const names = this.requests()
+      .map((request) => request.request_type_name)
+      .filter((name): name is string => Boolean(name));
+
+    return [...new Set(names)].sort((first, second) =>
+      first.localeCompare(second, 'pt-BR'),
+    );
+  });
+
+  filteredRequests = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const status = this.selectedStatus();
+    const priority = this.selectedPriority();
+    const type = this.selectedType();
+
+    return this.requests().filter((request) => {
+      const matchesTitle =
+        !term || request.title.toLowerCase().includes(term);
+
+      const matchesStatus =
+        !status || request.status === status;
+
+      const matchesPriority =
+        !priority || request.priority === priority;
+
+      const matchesType =
+        !type || request.request_type_name === type;
+
+      return (
+        matchesTitle &&
+        matchesStatus &&
+        matchesPriority &&
+        matchesType
+      );
+    });
+  });
+
+  hasActiveFilters = computed(() =>
+    Boolean(
+      this.searchTerm().trim() ||
+      this.selectedStatus() ||
+      this.selectedPriority() ||
+      this.selectedType(),
+    ),
+  );
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.selectedStatus.set('');
+    this.selectedPriority.set('');
+    this.selectedType.set('');
+  }
 
   constructor(private readonly internalRequestService: InternalRequestService) {}
 

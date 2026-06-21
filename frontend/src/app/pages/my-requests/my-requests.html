@@ -13,6 +13,88 @@
       <a routerLink="/requests/new">Nova requisição</a>
     </header>
 
+    <section class="filters-card" aria-label="Filtros de requisições">
+      <div class="filters-header">
+        <div>
+          <span>Filtros</span>
+          <h2>Localizar suas requisições</h2>
+        </div>
+
+        @if (hasActiveFilters()) {
+          <button type="button" (click)="clearFilters()">
+            Limpar filtros
+          </button>
+        }
+      </div>
+
+      <div class="filters-grid">
+        <label>
+          <span>Buscar por título</span>
+          <input
+            type="search"
+            placeholder="Digite o título da requisição"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+          />
+        </label>
+
+        <label>
+          <span>Status</span>
+          <select
+            [ngModel]="selectedStatus()"
+            (ngModelChange)="selectedStatus.set($event)"
+          >
+            <option value="">Todos os status</option>
+            <option value="SOLICITADA">Solicitada</option>
+            <option value="EM_ANALISE">Em análise</option>
+            <option value="APROVADA">Aprovada</option>
+            <option value="RECUSADA">Recusada</option>
+            <option value="CONCLUIDA">Concluída</option>
+            <option value="CANCELADA">Cancelada</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Prioridade</span>
+          <select
+            [ngModel]="selectedPriority()"
+            (ngModelChange)="selectedPriority.set($event)"
+          >
+            <option value="">Todas as prioridades</option>
+            <option value="BAIXA">Baixa</option>
+            <option value="MEDIA">Média</option>
+            <option value="ALTA">Alta</option>
+            <option value="URGENTE">Urgente</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Tipo</span>
+          <select
+            [ngModel]="selectedType()"
+            (ngModelChange)="selectedType.set($event)"
+          >
+            <option value="">Todos os tipos</option>
+
+            @for (typeName of requestTypeNames(); track typeName) {
+              <option [value]="typeName">{{ typeName }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (!isLoading() && requests().length) {
+        <p class="filters-result">
+          {{ filteredRequests().length }}
+          {{
+            filteredRequests().length === 1
+              ? 'requisição encontrada'
+              : 'requisições encontradas'
+          }}
+        </p>
+      }
+    </section>
+
     <article class="requests-card">
       @if (isLoading()) {
         <div class="empty-state">
@@ -34,9 +116,21 @@
 
           <a routerLink="/requests/new">Abrir primeira requisição</a>
         </div>
+      } @else if (!filteredRequests().length) {
+        <div class="empty-state">
+          <strong>Nenhuma requisição corresponde aos filtros</strong>
+          <p>
+            Altere os critérios ou limpe os filtros para visualizar novamente suas
+            solicitações.
+          </p>
+
+          <button type="button" (click)="clearFilters()">
+            Limpar filtros
+          </button>
+        </div>
       } @else {
         <div class="requests-list">
-          @for (request of requests(); track request.id) {
+          @for (request of filteredRequests(); track request.id) {
             <article class="request-item">
               <div class="request-main">
                 <div>

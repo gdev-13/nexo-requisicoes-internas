@@ -216,6 +216,102 @@
   color: var(--color-danger);
 }
 
+.filters-card {
+  margin-bottom: 22px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.filters-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.filters-header span {
+  color: var(--color-primary);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.filters-header h2 {
+  margin-top: 6px;
+  color: var(--color-text);
+  font-size: 1.25rem;
+  letter-spacing: -0.04em;
+}
+
+.filters-header button,
+.empty-state button {
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--color-primary);
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.filters-header button:hover,
+.empty-state button:hover {
+  background: #ffffff;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.filters-grid label {
+  display: grid;
+  gap: 8px;
+}
+
+.filters-grid label span {
+  color: var(--color-text);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.filters-grid input,
+.filters-grid select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  color: var(--color-text);
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.filters-grid input:focus,
+.filters-grid select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(36, 84, 198, 0.12);
+}
+
+.filters-result {
+  margin-top: 14px;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.empty-state button {
+  margin-top: 18px;
+}
+
 @media (max-width: 820px) {
   .page-header {
     flex-direction: column;
@@ -235,5 +331,27 @@
 
   .status-badge {
     width: fit-content;
+  }
+
+  .filters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .filters-card {
+    padding: 18px;
+  }
+
+  .filters-header {
+    flex-direction: column;
+  }
+
+  .filters-header button {
+    width: 100%;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
   }
 }
