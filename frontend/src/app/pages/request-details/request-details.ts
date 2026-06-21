@@ -36,6 +36,7 @@ export class RequestDetails implements OnInit {
 
   isApproveModalOpen = signal(false);
   isApproving = signal(false);
+  isRejectModalOpen = signal(false);
   isRejecting = signal(false);
   isConcludeModalOpen = signal(false);
   isConcluding = signal(false);
@@ -323,23 +324,32 @@ export class RequestDetails implements OnInit {
     );
   }
 
-  onRejectRequest(): void {
+  openRejectModal(): void {
+    if (!this.canReviewRequest()) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.isRejectModalOpen.set(true);
+  }
+
+  closeRejectModal(): void {
+    if (this.isRejecting()) {
+      return;
+    }
+
+    this.isRejectModalOpen.set(false);
+  }
+
+  confirmRejectRequest(comment: string | null): void {
     const request = this.request();
+    const normalizedComment = comment?.trim();
 
-    if (!request || !this.canReviewRequest()) {
-      return;
-    }
-
-    const comment = window.prompt(
-      'Informe a justificativa da recusa:',
-    );
-
-    if (comment === null) {
-      return;
-    }
-
-    if (!comment.trim()) {
-      this.errorMessage.set('Informe uma justificativa para recusar a requisição.');
+    if (
+      !request ||
+      !this.canReviewRequest() ||
+      !normalizedComment
+    ) {
       return;
     }
 
@@ -348,7 +358,7 @@ export class RequestDetails implements OnInit {
 
     this.internalRequestService
       .rejectRequest(request.id, {
-        comment: comment.trim(),
+        comment: normalizedComment,
       })
       .pipe(
         finalize(() => {
@@ -358,10 +368,13 @@ export class RequestDetails implements OnInit {
       .subscribe({
         next: (updatedRequest) => {
           this.request.set(updatedRequest);
+          this.isRejectModalOpen.set(false);
           this.loadRequestHistory(updatedRequest.id);
         },
         error: () => {
-          this.errorMessage.set('Não foi possível recusar a requisição.');
+          this.errorMessage.set(
+            'Não foi possível recusar a requisição.',
+          );
         },
       }
     );

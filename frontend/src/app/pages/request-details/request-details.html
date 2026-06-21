@@ -66,7 +66,7 @@
                 class="danger-action"
                 type="button"
                 [disabled]="isApproving() || isRejecting()"
-                (click)="onRejectRequest()"
+                (click)="openRejectModal()"
               >
                 {{ isRejecting() ? 'Recusando...' : 'Recusar' }}
               </button>
@@ -222,5 +222,24 @@
     variant="primary"
     [isProcessing]="isConcluding()"
     (confirmed)="confirmConcludeRequest()"
-    (closed)="closeConcludeModal()" />
+    (closed)="closeConcludeModal()"
+  />
+
+  <app-confirmation-modal
+    [isOpen]="isRejectModalOpen()"
+    title="Recusar requisição"
+    message="Informe uma justificativa clara para a recusa. Ela será registrada no histórico e poderá ser consultada pelo solicitante."
+    confirmLabel="Recusar requisição"
+    cancelLabel="Voltar"
+    processingLabel="Recusando..."
+    variant="danger"
+    [requiresComment]="true"
+    commentLabel="Justificativa"
+    commentPlaceholder="Explique o motivo da recusa"
+    commentRequiredMessage="Informe uma justificativa para recusar a requisição."
+    [commentMaxLength]="500"
+    [isProcessing]="isRejecting()"
+    (confirmed)="confirmRejectRequest($event)"
+    (closed)="closeRejectModal()"
+  />
 </app-layout>

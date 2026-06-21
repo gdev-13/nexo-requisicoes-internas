@@ -29,6 +29,34 @@
         <p id="confirmation-modal-message">
           {{ message }}
         </p>
+
+        @if (requiresComment) {
+        <label class="modal-field">
+            <span>{{ commentLabel }}</span>
+
+            <textarea
+            rows="5"
+            [placeholder]="commentPlaceholder"
+            [attr.maxlength]="commentMaxLength"
+            [ngModel]="comment"
+            (ngModelChange)="onCommentChange($event)"
+            ></textarea>
+
+            <div class="field-footer">
+            @if (validationMessage) {
+                <small class="field-error">
+                {{ validationMessage }}
+                </small>
+            } @else {
+                <span></span>
+            }
+
+            <small>
+                {{ comment.length }}/{{ commentMaxLength }}
+            </small>
+            </div>
+        </label>
+        }
       </div>
 
       <div class="modal-actions">
