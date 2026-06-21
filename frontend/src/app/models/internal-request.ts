@@ -22,6 +22,7 @@ export interface InternalRequestResponse {
   status: RequestStatus;
   priority: RequestPriority;
   requester_id: number;
+  requester_name: string | null;
   request_type_name: string | null;
   request_type_id: number;
   created_at: string;

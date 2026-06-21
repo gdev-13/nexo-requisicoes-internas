@@ -88,6 +88,11 @@
                 <p>{{ request.description }}</p>
 
                 <div class="item-meta">
+                  @if (isAnalyst()) {
+                    <span>
+                      Solicitante: {{ request.requester_name || 'Usuário não informado' }}
+                    </span>
+                  }
                   <span>Tipo: {{ request.request_type_name || 'Tipo não informado' }}</span>
                   <span>Prioridade: {{ getPriorityLabel(request.priority) }}</span>
                   <span>{{ request.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>

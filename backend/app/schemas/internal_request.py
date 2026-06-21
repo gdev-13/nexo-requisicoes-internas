@@ -21,6 +21,7 @@ class InternalRequestResponse(BaseModel):
     status: RequestStatus
     priority: RequestPriority
     requester_id: int
+    requester_name: str | None = None
     request_type_id: int
     request_type_name: str | None = None
     created_at: datetime

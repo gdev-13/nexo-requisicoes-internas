@@ -79,6 +79,15 @@ class InternalRequest(Base):
 
     request_type = relationship("RequestType")
 
+
+    @property
+    def requester_name(self) -> str | None:
+        if not self.requester: 
+            return None
+        
+        return self.requester.name
+
+
     @property
     def request_type_name(self) -> str | None:
         if not self.request_type:

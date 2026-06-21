@@ -99,6 +99,13 @@
           <p class="description">{{ request()?.description }}</p>
 
           <div class="info-grid">
+            @if (isAnalyst()) {
+              <div>
+                <span>Solicitante</span>
+                <strong>{{ request()?.requester_name || 'Usuário não informado' }}</strong>
+              </div>
+            }
+
             <div>
               <span>Tipo</span>
               <strong>{{ request()?.request_type_name || 'Tipo não informado' }}</strong>

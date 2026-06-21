@@ -145,6 +145,10 @@
               <div class="request-footer">
                 <div class="request-meta">
                   <span>
+                    Solicitante: {{ request.requester_name || 'Usuário não informado' }}
+                  </span>
+                  
+                  <span>
                     Prioridade: {{ getPriorityLabel(request.priority) }}
                   </span>
 
