@@ -37,6 +37,7 @@ export class RequestDetails implements OnInit {
   isApproveModalOpen = signal(false);
   isApproving = signal(false);
   isRejecting = signal(false);
+  isConcludeModalOpen = signal(false);
   isConcluding = signal(false);
 
   constructor(
@@ -376,21 +377,30 @@ export class RequestDetails implements OnInit {
     return request.status === 'APROVADA';
   }
 
-  onConcludeRequest(): void {
+  openConcludeModal(): void {
+    if (!this.canConcludeRequest()) {
+      return;
+    }
+    
+    this.isConcludeModalOpen.set(true);
+  }
+  
+  closeConcludeModal(): void {
+    if (this.isConcluding()) {
+      return;
+    }
+    
+    this.isConcludeModalOpen.set(false);
+  }
+  
+  confirmConcludeRequest(): void {
     const request = this.request();
 
     if (!request || !this.canConcludeRequest()) {
+      this.isConcludeModalOpen.set(false);
       return;
     }
-
-    const shouldConclude = window.confirm(
-      'Deseja concluir esta requisição?',
-    );
-
-    if (!shouldConclude) {
-      return;
-    }
-
+    
     this.isConcluding.set(true);
     this.errorMessage.set('');
 
@@ -406,10 +416,12 @@ export class RequestDetails implements OnInit {
       .subscribe({
         next: (updatedRequest) => {
           this.request.set(updatedRequest);
+          this.isConcludeModalOpen.set(false);
           this.loadRequestHistory(updatedRequest.id);
-        },
-        error: () => {
-          this.errorMessage.set('Não foi possível concluir a requisição.');
+        }, error: () => {
+          this.errorMessage.set(
+            'Não foi possível concluir a requisição.',
+          );
         },
       }
     );

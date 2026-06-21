@@ -77,7 +77,7 @@
                 class="primary-action"
                 type="button"
                 [disabled]="isConcluding()"
-                (click)="onConcludeRequest()"
+                (click)="openConcludeModal()"
               >
                 {{ isConcluding() ? 'Concluindo...' : 'Concluir requisição' }}
               </button>
@@ -211,4 +211,16 @@
     (confirmed)="confirmApproveRequest()"
     (closed)="closeApproveModal()"
   />
+
+  <app-confirmation-modal
+    [isOpen]="isConcludeModalOpen()"
+    title="Concluir requisição"
+    message="A requisição será marcada como concluída e seu fluxo será encerrado. A movimentação continuará disponível no histórico."
+    confirmLabel="Concluir requisição"
+    cancelLabel="Voltar"
+    processingLabel="Concluindo..."
+    variant="primary"
+    [isProcessing]="isConcluding()"
+    (confirmed)="confirmConcludeRequest()"
+    (closed)="closeConcludeModal()" />
 </app-layout>
