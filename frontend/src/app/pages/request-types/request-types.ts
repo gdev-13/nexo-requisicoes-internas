@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { AppLayout } from '../../components/app-layout/app-layout';
+import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 import { UserResponse } from '../../models/auth';
 import { 
   RequestTypeCreate,
@@ -14,7 +15,7 @@ import { RequestTypeService } from '../../services/request-type.service';
 
 @Component({
   selector: 'app-request-types',
-  imports: [AppLayout, FormsModule],
+  imports: [AppLayout, FormsModule, ConfirmationModal],
   templateUrl: './request-types.html',
   styleUrl: './request-types.css',
 })
@@ -28,6 +29,10 @@ export class RequestTypes {
   
   editingRequestType = signal<RequestTypeResponse | null>(null);
   changingStatusTypeId = signal<number | null>(null);
+
+  isStatusModalOpen = signal(false);
+  selectedStatusType = signal<RequestTypeResponse | null>(null);
+  requestTypeStatusAction = signal<'enable' | 'disable' | null>(null);
 
   formData: RequestTypeCreate = {
     name: '',
@@ -220,16 +225,12 @@ export class RequestTypes {
     };
   }
 
-  onDisableRequestType(type: RequestTypeResponse): void {
-    if (!this.isAnalyst()) {
-      return;
-    }
+  confirmRequestTypeStatusChange(): void {
+    const type = this.selectedStatusType();
+    const action = this.requestTypeStatusAction();
 
-    const shouldDisable = window.confirm(
-      `Deseja desativar o tipo "${type.name}"?`,
-    );
-
-    if (!shouldDisable) {
+    if (!type || !action || !this.isAnalyst()) {
+      this.closeStatusModal();
       return;
     }
 
@@ -237,62 +238,109 @@ export class RequestTypes {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    this.requestTypeService
-      .disableRequestType(type.id)
+    const statusRequest =
+      action === 'disable'
+        ? this.requestTypeService.disableRequestType(type.id)
+        : this.requestTypeService.enableRequestType(type.id);
+
+    statusRequest
+      .pipe(
+        finalize(() => {
+          this.changingStatusTypeId.set(null);
+        }),
+      )
       .subscribe({
         next: () => {
-          this.successMessage.set('Tipo de requisição desativado com sucesso.');
+          this.successMessage.set(
+            action === 'disable'
+              ? 'Tipo de requisição desativado com sucesso.'
+              : 'Tipo de requisição reativado com sucesso.',
+          );
+
+          this.isStatusModalOpen.set(false);
+          this.selectedStatusType.set(null);
+          this.requestTypeStatusAction.set(null);
 
           const currentUser = this.currentUser();
 
           if (currentUser) {
             this.loadRequestTypes(currentUser);
           }
-
-          this.changingStatusTypeId.set(null);
         },
         error: (error: HttpErrorResponse) => {
-          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
-          this.changingStatusTypeId.set(null);
+          this.errorMessage.set(
+            this.getRequestTypeErrorMessage(error),
+          );
         },
-      });
+      }
+    );
   }
 
-  onEnableRequestType(type: RequestTypeResponse): void {
-    if (!this.isAnalyst()) {
+  openDisableRequestTypeModal(type: RequestTypeResponse): void {
+    if (!this.isAnalyst() || !type.active) {
       return;
     }
 
-    const shouldEnable = window.confirm(
-      `Deseja reativar o tipo "${type.name}"?`,
-    );
+    this.selectedStatusType.set(type);
+    this.requestTypeStatusAction.set('disable');
+    this.isStatusModalOpen.set(true);
+  }
 
-    if (!shouldEnable) {
+  openEnableRequestTypeModal(type: RequestTypeResponse): void {
+    if (!this.isAnalyst() || type.active) {
       return;
     }
 
-    this.changingStatusTypeId.set(type.id);
-    this.errorMessage.set('');
-    this.successMessage.set('');
+    this.selectedStatusType.set(type);
+    this.requestTypeStatusAction.set('enable');
+    this.isStatusModalOpen.set(true);
+  }
 
-    this.requestTypeService
-      .enableRequestType(type.id)
-      .subscribe({
-        next: () => {
-          this.successMessage.set('Tipo de requisição reativado com sucesso.');
+  closeStatusModal(): void {
+    if (this.changingStatusTypeId() !== null) {
+      return;
+    }
 
-          const currentUser = this.currentUser();
+    this.isStatusModalOpen.set(false);
+    this.selectedStatusType.set(null);
+    this.requestTypeStatusAction.set(null);
+  }
 
-          if (currentUser) {
-            this.loadRequestTypes(currentUser);
-          }
+  getStatusModalTitle(): string {
+    return this.requestTypeStatusAction() === 'disable'
+      ? 'Desativar tipo de requisição'
+      : 'Reativar tipo de requisição';
+  }
 
-          this.changingStatusTypeId.set(null);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorMessage.set(this.getRequestTypeErrorMessage(error));
-          this.changingStatusTypeId.set(null);
-        },
-      });
+  getStatusModalMessage(): string {
+    const type = this.selectedStatusType();
+
+    if (!type) {
+      return '';
+    }
+
+    if (this.requestTypeStatusAction() === 'disable') {
+      return `O tipo "${type.name}" deixará de aparecer para novas requisições. As solicitações já cadastradas não serão alteradas.`;
+    }
+
+    return `O tipo "${type.name}" voltará a ficar disponível para abertura de novas requisições.`;
+  }
+
+  getStatusModalConfirmLabel(): string {
+    return this.requestTypeStatusAction() === 'disable'
+      ? 'Desativar tipo'
+      : 'Reativar tipo';
+  }
+
+  getStatusModalProcessingLabel(): string {
+    return this.requestTypeStatusAction() === 'disable'
+      ? 'Desativando...'
+      : 'Reativando...';
+  }
+
+  getStatusModalVariant(): 'primary' | 'danger' {
+    return this.requestTypeStatusAction() === 'disable'
+      ? 'danger'
+      : 'primary';
   }
 }

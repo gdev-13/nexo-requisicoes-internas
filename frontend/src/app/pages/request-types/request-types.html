@@ -147,7 +147,7 @@
                       class="danger-action"
                       type="button"
                       [disabled]="changingStatusTypeId() === type.id"
-                      (click)="onDisableRequestType(type)"
+                      (click)="openDisableRequestTypeModal(type)"
                     >
                       {{ changingStatusTypeId() === type.id ? 'Desativando...' : 'Desativar' }}
                     </button>
@@ -156,7 +156,7 @@
                       class="success-action"
                       type="button"
                       [disabled]="changingStatusTypeId() === type.id"
-                      (click)="onEnableRequestType(type)"
+                      (click)="openEnableRequestTypeModal(type)"
                     >
                       {{ changingStatusTypeId() === type.id ? 'Reativando...' : 'Reativar' }}
                     </button>
@@ -169,4 +169,16 @@
       }
     </article>
   </section>
+  <app-confirmation-modal
+    [isOpen]="isStatusModalOpen()"
+    [title]="getStatusModalTitle()"
+    [message]="getStatusModalMessage()"
+    [confirmLabel]="getStatusModalConfirmLabel()"
+    cancelLabel="Voltar"
+    [processingLabel]="getStatusModalProcessingLabel()"
+    [variant]="getStatusModalVariant()"
+    [isProcessing]="changingStatusTypeId() !== null"
+    (confirmed)="confirmRequestTypeStatusChange()"
+    (closed)="closeStatusModal()"
+  />
 </app-layout>
