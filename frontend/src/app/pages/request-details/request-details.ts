@@ -12,10 +12,11 @@ import {
 } from '../../models/internal-request';
 import { InternalRequestService } from '../../services/internal-request.service';
 import { UserResponse } from '../../models/auth';
+import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 
 @Component({
   selector: 'app-request-details',
-  imports: [AppLayout, RouterLink, DatePipe],
+  imports: [AppLayout, RouterLink, DatePipe, ConfirmationModal],
   templateUrl: './request-details.html',
   styleUrl: './request-details.css',
 })
@@ -28,6 +29,7 @@ export class RequestDetails implements OnInit {
 
   currentUser = signal<UserResponse | null>(null);
   isCanceling = signal(false);  
+  isCancelModalOpen = signal(false);
 
   isStartingAnalysis = signal(false);
 
@@ -160,18 +162,27 @@ export class RequestDetails implements OnInit {
     return request.status === 'SOLICITADA';
   }
 
-  onCancelRequest(): void {
-    const request = this.request();
-
-    if (!request || !this.canCancelRequest()) {
+  openCancelModal(): void {
+    if (!this.canCancelRequest()) {
       return;
     }
 
-    const shouldCancel = window.confirm(
-      'Tem certeza que deseja cancelar esta requisição?',
-    );
+    this.isCancelModalOpen.set(true);
+  }
 
-    if (!shouldCancel) {
+  closeCancelModal(): void {
+    if (this.isCanceling()) {
+      return;
+    }
+
+    this.isCancelModalOpen.set(false);
+  }
+
+  confirmCancelRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canCancelRequest()) {
+      this.isCancelModalOpen.set(false);
       return;
     }
 
@@ -190,12 +201,14 @@ export class RequestDetails implements OnInit {
       .subscribe({
         next: (updatedRequest) => {
           this.request.set(updatedRequest);
+          this.isCancelModalOpen.set(false);
           this.loadRequestHistory(updatedRequest.id);
         },
         error: () => {
           this.errorMessage.set('Não foi possível cancelar a requisição.');
         },
-      });
+      }
+    );
   }
 
   private loadRequestHistory(requestId: number): void {

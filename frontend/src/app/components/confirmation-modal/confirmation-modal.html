@@ -1,0 +1,56 @@
+@if (isOpen) {
+  <div
+    class="modal-backdrop"
+    role="presentation"
+    (click)="onBackdropClick($event)"
+  >
+    <section
+      class="confirmation-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmation-modal-title"
+      aria-describedby="confirmation-modal-message"
+    >
+      <div class="modal-icon" [class.danger]="variant === 'danger'">
+        @if (variant === 'danger') {
+          !
+        } @else {
+          ?
+        }
+      </div>
+
+      <div class="modal-content">
+        <span>Confirmação</span>
+
+        <h2 id="confirmation-modal-title">
+          {{ title }}
+        </h2>
+
+        <p id="confirmation-modal-message">
+          {{ message }}
+        </p>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="secondary-action"
+          type="button"
+          [disabled]="isProcessing"
+          (click)="requestClose()"
+        >
+          {{ cancelLabel }}
+        </button>
+
+        <button
+          class="confirm-action"
+          type="button"
+          [class.danger-action]="variant === 'danger'"
+          [disabled]="isProcessing"
+          (click)="confirm()"
+        >
+          {{ isProcessing ? processingLabel : confirmLabel }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

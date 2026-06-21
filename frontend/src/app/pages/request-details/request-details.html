@@ -88,7 +88,7 @@
                 class="danger-action"
                 type="button"
                 [disabled]="isCanceling()"
-                (click)="onCancelRequest()"
+                (click)="openCancelModal()"
                 >
                 {{ isCanceling() ? 'Cancelando...' : 'Cancelar requisição' }}
                 </button>
@@ -173,4 +173,16 @@
       </section>
     }
   </section>
+    <app-confirmation-modal
+    [isOpen]="isCancelModalOpen()"
+    title="Cancelar requisição"
+    message="Esta ação não poderá ser desfeita. A requisição será encerrada como cancelada e permanecerá disponível no histórico."
+    confirmLabel="Cancelar requisição"
+    cancelLabel="Manter requisição"
+    processingLabel="Cancelando..."
+    variant="danger"
+    [isProcessing]="isCanceling()"
+    (confirmed)="confirmCancelRequest()"
+    (closed)="closeCancelModal()"
+  />
 </app-layout>
