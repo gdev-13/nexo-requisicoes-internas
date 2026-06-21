@@ -57,7 +57,7 @@
                 class="success-action"
                 type="button"
                 [disabled]="isApproving() || isRejecting()"
-                (click)="onApproveRequest()"
+                (click)="openApproveModal()"
               >
                 {{ isApproving() ? 'Aprovando...' : 'Aprovar' }}
               </button>
@@ -197,5 +197,18 @@
     [isProcessing]="isStartingAnalysis()"
     (confirmed)="confirmStartAnalysis()"
     (closed)="closeStartAnalysisModal()"
+  />
+
+  <app-confirmation-modal
+    [isOpen]="isApproveModalOpen()"
+    title="Aprovar requisição"
+    message="A requisição será aprovada e ficará disponível para conclusão após a execução da solicitação."
+    confirmLabel="Aprovar requisição"
+    cancelLabel="Voltar"
+    processingLabel="Aprovando..."
+    variant="primary"
+    [isProcessing]="isApproving()"
+    (confirmed)="confirmApproveRequest()"
+    (closed)="closeApproveModal()"
   />
 </app-layout>

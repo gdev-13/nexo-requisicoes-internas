@@ -34,6 +34,7 @@ export class RequestDetails implements OnInit {
   isStartingAnalysis = signal(false);
   isStartAnalysisModalOpen = signal(false);
 
+  isApproveModalOpen = signal(false);
   isApproving = signal(false);
   isRejecting = signal(false);
   isConcluding = signal(false);
@@ -272,18 +273,27 @@ export class RequestDetails implements OnInit {
     return request.status === 'EM_ANALISE';
   }
 
-  onApproveRequest(): void {
-    const request = this.request();
-
-    if (!request || !this.canReviewRequest()) {
+  openApproveModal(): void {
+    if (!this.canReviewRequest()) {
       return;
     }
 
-    const shouldApprove = window.confirm(
-      'Deseja aprovar esta requisição?',
-    );
+    this.isApproveModalOpen.set(true);
+  }
 
-    if (!shouldApprove) {
+  closeApproveModal(): void {
+    if (this.isApproving()) {
+      return;
+    }
+
+    this.isApproveModalOpen.set(false);
+  }
+
+  confirmApproveRequest(): void {
+    const request = this.request();
+
+    if (!request || !this.canReviewRequest()) {
+      this.isApproveModalOpen.set(false);
       return;
     }
 
@@ -302,12 +312,14 @@ export class RequestDetails implements OnInit {
       .subscribe({
         next: (updatedRequest) => {
           this.request.set(updatedRequest);
+          this.isApproveModalOpen.set(false);
           this.loadRequestHistory(updatedRequest.id);
         },
         error: () => {
           this.errorMessage.set('Não foi possível aprovar a requisição.');
         },
-      });
+      }
+    );
   }
 
   onRejectRequest(): void {
