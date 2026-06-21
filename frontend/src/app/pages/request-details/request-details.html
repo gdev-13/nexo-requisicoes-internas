@@ -46,7 +46,7 @@
                 class="primary-action"
                 type="button"
                 [disabled]="isStartingAnalysis()"
-                (click)="onStartAnalysis()"
+                (click)="openStartAnalysisModal()"
               >
                 {{ isStartingAnalysis() ? 'Iniciando...' : 'Iniciar análise' }}
               </button>
@@ -184,5 +184,18 @@
     [isProcessing]="isCanceling()"
     (confirmed)="confirmCancelRequest()"
     (closed)="closeCancelModal()"
+  />
+
+  <app-confirmation-modal
+    [isOpen]="isStartAnalysisModalOpen()"
+    title="Iniciar análise"
+    message="A requisição será movida para o status Em análise e ficará disponível para aprovação ou recusa."
+    confirmLabel="Iniciar análise"
+    cancelLabel="Voltar"
+    processingLabel="Iniciando..."
+    variant="primary"
+    [isProcessing]="isStartingAnalysis()"
+    (confirmed)="confirmStartAnalysis()"
+    (closed)="closeStartAnalysisModal()"
   />
 </app-layout>

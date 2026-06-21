@@ -32,6 +32,7 @@ export class RequestDetails implements OnInit {
   isCancelModalOpen = signal(false);
 
   isStartingAnalysis = signal(false);
+  isStartAnalysisModalOpen = signal(false);
 
   isApproving = signal(false);
   isRejecting = signal(false);
@@ -92,18 +93,27 @@ export class RequestDetails implements OnInit {
     return request.status === 'SOLICITADA';
   }
 
-  onStartAnalysis(): void {
-    const request = this.request();
-
-    if (!request || !this.canStartAnalysis()) {
+  openStartAnalysisModal(): void {
+    if (!this.canStartAnalysis()) {
       return;
     }
 
-    const shouldStart = window.confirm(
-      'Deseja iniciar a análise desta requisição?',
-    );
+    this.isStartAnalysisModalOpen.set(true);
+  }
 
-    if (!shouldStart) {
+  closeStartAnalysisModal(): void {
+    if (this.isStartingAnalysis()) {
+      return;
+    }
+
+    this.isStartAnalysisModalOpen.set(false);
+  }
+
+  confirmStartAnalysis(): void {
+    const request = this.request();
+
+    if (!request || !this.canStartAnalysis()) {
+      this.isStartAnalysisModalOpen.set(false);
       return;
     }
 
@@ -122,12 +132,16 @@ export class RequestDetails implements OnInit {
       .subscribe({
         next: (updatedRequest) => {
           this.request.set(updatedRequest);
+          this.isStartAnalysisModalOpen.set(false);
           this.loadRequestHistory(updatedRequest.id);
         },
         error: () => {
-          this.errorMessage.set('Não foi possível iniciar a análise da requisição.');
+          this.errorMessage.set(
+            'Não foi possível iniciar a análise da requisição.',
+          );
         },
-      });
+      }
+    );
   }
 
   setCurrentUser(user: UserResponse | null): void {
