@@ -2,54 +2,13 @@
   width: 100%;
 }
 
-.page-header {
-  margin-bottom: 26px;
-}
-
-.page-header span,
-.type-header span {
-  color: var(--color-primary);
-  font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.page-header h1 {
-  margin-top: 8px;
-  color: var(--color-text);
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.05;
-  letter-spacing: -0.05em;
-}
-
-.page-header p {
-  max-width: 720px;
-  margin-top: 12px;
-  color: var(--color-muted);
-  font-size: 0.98rem;
-  line-height: 1.65;
-}
-
 .form-card {
   margin-bottom: 22px;
   padding: 24px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
 }
 
 .form-header {
   margin-bottom: 18px;
-}
-
-.form-header span {
-  color: var(--color-primary);
-  font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .form-header h2 {
@@ -166,10 +125,6 @@
 
 .types-card {
   padding: 24px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
 }
 
 .types-grid {

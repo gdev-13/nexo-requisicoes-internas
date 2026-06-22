@@ -1,7 +1,7 @@
 <app-layout (currentUserLoaded)="setCurrentUser($event)">
-  <header class="dashboard-header">
+  <header class="dashboard-header app-page-header">
     <div>
-      <span>Painel inicial</span>
+      <span class="app-eyebrow">Painel inicial</span>
       <h1>Visão geral das requisições</h1>
       <p>
         Acompanhe solicitações internas, status de análise e movimentações
@@ -19,7 +19,7 @@
   }
 
   <section class="summary-grid">
-    <article class="summary-card">
+    <article class="summary-card app-surface-card">
       <span>{{ isAnalyst() ? 'Todas as requisições' : 'Minhas requisições' }}</span>
       <strong>{{ isLoading() ? '—' : getTotalRequests() }}</strong>
       <p>
@@ -27,19 +27,19 @@
       </p>
     </article>
 
-    <article class="summary-card">
+    <article class="summary-card app-surface-card">
       <span>Em análise</span>
       <strong>{{ isLoading() ? '—' : getRequestsInAnalysis() }}</strong>
       <p>Requisições que estão sendo analisadas.</p>
     </article>
 
-    <article class="summary-card">
+    <article class="summary-card app-surface-card">
       <span>Concluídas</span>
       <strong>{{ isLoading() ? '—' : getCompletedRequests() }}</strong>
       <p>Requisições finalizadas no fluxo.</p>
     </article>
 
-    <article class="summary-card">
+    <article class="summary-card app-surface-card">
       <span>Tipos ativos</span>
       <strong>{{ isLoading() ? '—' : activeRequestTypesCount() }}</strong>
       <p>Tipos disponíveis para abertura de solicitações.</p>
@@ -47,10 +47,10 @@
   </section>
 
   <section class="dashboard-grid">
-    <article class="panel-card">
+    <article class="panel-card app-surface-card">
       <div class="panel-header">
         <div>
-          <span>Requisições</span>
+          <span class="app-eyebrow">Requisições</span>
           <h2>{{ isAnalyst() ? 'Últimas solicitações' : 'Suas últimas solicitações' }}</h2>
         </div>
 
@@ -106,10 +106,10 @@
       </div>
     </article>
 
-    <article class="panel-card">
+    <article class="panel-card app-surface-card">
       <div class="panel-header">
         <div>
-          <span>Histórico</span>
+          <span class="app-eyebrow">Histórico</span>
           <h2>Movimentações recentes</h2>
         </div>
 

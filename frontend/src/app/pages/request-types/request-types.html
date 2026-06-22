@@ -1,8 +1,8 @@
 <app-layout (currentUserLoaded)="setCurrentUser($event)">
   <section class="request-types-page">
-    <header class="page-header">
+    <header class="page-header app-page-header">
       <div>
-        <span>Tipos de requisição</span>
+        <span class="app-eyebrow">Tipos de requisição</span>
 
         @if (isAnalyst()) {
           <h1>Consulte os tipos cadastrados</h1>
@@ -22,10 +22,10 @@
     </header>
 
     @if (isAnalyst()) {
-      <article class="form-card">
+      <article class="form-card app-surface-card">
         <div class="form-header">
           <div>
-            <span>{{ isEditing() ? 'Editar tipo' : 'Novo tipo' }}</span>
+            <span class="app-eyebrow">{{ isEditing() ? 'Editar tipo' : 'Novo tipo' }}</span>
             <h2>
               {{ isEditing() ? 'Atualizar tipo de requisição' : 'Cadastrar tipo de requisição' }}
             </h2>
@@ -99,7 +99,7 @@
       </article>
     }
 
-    <article class="types-card">
+    <article class="types-card app-surface-card">
       @if (isLoading()) {
         <div class="empty-state">
           <strong>Carregando tipos de requisição...</strong>
@@ -123,7 +123,7 @@
             <article class="type-card">
               <div class="type-header">
                 <div>
-                  <span>Tipo #{{ type.id }}</span>
+                  <span class="app-eyebrow">Tipo #{{ type.id }}</span>
                   <h2>{{ type.name }}</h2>
                 </div>
 
