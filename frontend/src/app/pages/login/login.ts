@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { LoginRequest } from '../../models/auth';
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   formData: LoginRequest = {
     email: '',
     password: '',
@@ -23,10 +23,13 @@ export class Login {
   isLoading = false;
   errorMessage = '';
 
+  sessionMessage = signal('');
+
   constructor(
     private readonly authService: AuthService,
     private readonly authStorageService: AuthStorageService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   onSubmit(form: NgForm): void {
@@ -83,5 +86,26 @@ export class Login {
     }
 
     return 'Não foi possível realizar o login. Verifique os dados informados.';
+  }
+
+  ngOnInit(): void {
+    const reason = this.route.snapshot.queryParamMap.get('reason');
+
+    if (reason !== 'session-expired') {
+      return;
+    }
+
+    this.sessionMessage.set(
+      'Sua sessão expirou. Entre novamente para continuar.',
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        reason: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

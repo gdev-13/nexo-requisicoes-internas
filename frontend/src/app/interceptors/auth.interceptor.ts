@@ -29,9 +29,14 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       if (error.status === 401) {
         authStorageService.clearToken();
 
-        void router.navigate(['/login'], {
-          replaceUrl: true,
-        });
+        if (!router.url.startsWith('/login')) {
+          void router.navigate(['/login'], {
+            replaceUrl: true,
+            queryParams: {
+              reason: 'session-expired',
+            },
+          });
+        }
       }
 
       return throwError(() => error);

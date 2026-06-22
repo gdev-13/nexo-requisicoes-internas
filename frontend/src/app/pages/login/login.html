@@ -17,6 +17,13 @@
       </p>
     </div>
 
+    @if (sessionMessage()) {
+      <div class="session-message" role="status">
+        <strong>Sessão encerrada</strong>
+        <p>{{ sessionMessage() }}</p>
+      </div>
+    }
+
     <form
       class="login-form"
       #loginForm="ngForm"
