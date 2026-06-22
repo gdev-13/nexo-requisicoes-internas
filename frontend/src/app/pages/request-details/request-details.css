@@ -119,32 +119,6 @@
   font-weight: 900;
 }
 
-.status-solicitada {
-  color: #1d4ed8;
-  background: #dbeafe;
-}
-
-.status-em_analise {
-  color: #a16207;
-  background: #fef3c7;
-}
-
-.status-aprovada {
-  color: #047857;
-  background: #d1fae5;
-}
-
-.status-recusada,
-.status-cancelada {
-  color: #b91c1c;
-  background: #fee2e2;
-}
-
-.status-concluida {
-  color: #4338ca;
-  background: #e0e7ff;
-}
-
 .description {
   color: var(--color-muted);
   font-size: 0.96rem;
@@ -221,7 +195,6 @@
   font-weight: 800;
 }
 
-.empty-state,
 .empty-history {
   padding: 32px;
   text-align: center;
@@ -230,29 +203,18 @@
   border-radius: var(--radius-md);
 }
 
-.empty-state strong,
 .empty-history strong {
   display: block;
   color: var(--color-text);
   font-size: 1rem;
 }
 
-.empty-state p,
 .empty-history p {
   max-width: 520px;
   margin: 10px auto 0;
   color: var(--color-muted);
   font-size: 0.9rem;
   line-height: 1.6;
-}
-
-.empty-state a {
-  margin-top: 18px;
-}
-
-.empty-state.error strong,
-.empty-state.error p {
-  color: var(--color-danger);
 }
 
 .primary-action {

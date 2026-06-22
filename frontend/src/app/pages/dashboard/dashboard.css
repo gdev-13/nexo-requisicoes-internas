@@ -156,24 +156,14 @@
 
 .empty-state {
   padding: 28px;
-  text-align: center;
-  background: var(--color-surface-soft);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
 }
 
 .empty-state strong {
-  display: block;
-  color: var(--color-text);
   font-size: 0.98rem;
 }
 
 .empty-state p {
   max-width: 420px;
-  margin: 10px auto 0;
-  color: var(--color-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
 }
 
 .dashboard-list,
@@ -265,32 +255,6 @@
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 900;
-}
-
-.status-solicitada {
-  color: #1d4ed8;
-  background: #dbeafe;
-}
-
-.status-em_analise {
-  color: #a16207;
-  background: #fef3c7;
-}
-
-.status-aprovada {
-  color: #047857;
-  background: #d1fae5;
-}
-
-.status-recusada,
-.status-cancelada {
-  color: #b91c1c;
-  background: #fee2e2;
-}
-
-.status-concluida {
-  color: #4338ca;
-  background: #e0e7ff;
 }
 
 .history-preview-item strong {
