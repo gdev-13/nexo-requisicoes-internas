@@ -1,0 +1,2 @@
+ALTER TYPE public.userrole
+ADD VALUE IF NOT EXISTS 'ADMIN';

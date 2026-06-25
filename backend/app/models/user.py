@@ -13,6 +13,7 @@ from app.db.database import Base
 class UserRole(str, Enum):
     REQUESTER = "REQUESTER"
     ANALYST = "ANALYST"
+    ADMIN = "ADMIN"
 
 
 class User(Base):
