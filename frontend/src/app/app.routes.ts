@@ -20,8 +20,7 @@ import { requesterGuard } from './guards/requester.guard';
 export const routes: Routes = [
   {
     path: '',
-    component: Home,
-    canActivate: [guestGuard]
+    component: Home
   },
   {
     path: 'login',
