@@ -69,11 +69,11 @@
 .dashboard-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  align-items: flex-start;
   gap: 18px;
 }
 
 .panel-card {
-  min-height: 360px;
   max-height: 520px;
   display: flex;
   flex-direction: column;

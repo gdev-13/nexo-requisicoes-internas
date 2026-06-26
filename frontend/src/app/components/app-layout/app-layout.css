@@ -1,13 +1,24 @@
+:host {
+  display: block;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .app-layout {
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
   background: var(--color-bg);
+  overflow: hidden;
 }
 
 .app-layout-content {
   min-width: 0;
-  padding: 32px;
+  min-height: 0;
+  padding: 32px 32px 16px;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .mobile-menu-button {
