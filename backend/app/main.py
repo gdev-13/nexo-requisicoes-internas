@@ -5,7 +5,7 @@ from sqlalchemy import text
 from app.core.config import CORS_ORIGINS
 from app.db.database import SessionLocal
 from app.db.init_db import init_db
-from app.routes import auth, internal_request, request_type
+from app.routes import admin, auth, internal_request, request_type
 
 app = FastAPI(
     title="Nexo API",
@@ -30,6 +30,7 @@ init_db()
 app.include_router(auth.router)
 app.include_router(request_type.router)
 app.include_router(internal_request.router)
+app.include_router(admin.router)
 
 
 @app.get("/")

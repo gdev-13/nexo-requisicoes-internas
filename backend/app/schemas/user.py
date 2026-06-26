@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.models.user import UserRole
 
@@ -31,3 +31,23 @@ class UserLogin(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class UserRoleUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    role: UserRole
+
+    @field_validator("role")
+    @classmethod
+    def validate_assignable_role(cls, role: UserRole) -> UserRole:
+        if role == UserRole.ADMIN:
+            raise ValueError(
+                "O perfil ADMIN não pode ser atribuído por este endpoint."
+            )
+
+        return role
+
+
+class AdminUserResponse(UserResponse):
+    is_current_user: bool
