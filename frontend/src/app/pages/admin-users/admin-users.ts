@@ -1,16 +1,19 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { finalize } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 import { AppLayout } from '../../components/app-layout/app-layout';
 import { AdminUserResponse, UserResponse, UserRole } from '../../models/auth';
 import { AdminUserService } from '../../services/admin-user.service';
 import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 
+type UserRoleFilter = UserRole | 'ALL';
+
 @Component({
   selector: 'app-admin-users',
-  imports: [AppLayout, DatePipe, ConfirmationModal],
+  imports: [AppLayout, DatePipe, ConfirmationModal, FormsModule],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
 })
@@ -22,6 +25,25 @@ export class AdminUsers implements OnInit {
   errorMessage = signal('');
   successMessage = signal('');
   selectedUserForRoleUpdate = signal<AdminUserResponse | null>(null);
+
+  searchTerm = signal('');
+  roleFilter = signal<UserRoleFilter>('ALL');
+
+  filteredUsers = computed(() => {
+    const normalizedSearchTerm = this.normalizeText(this.searchTerm());
+    const selectedRole = this.roleFilter();
+
+    return this.users().filter((user) => {
+      const userSearchContent = this.normalizeText(`${user.name} ${user.email}`);
+
+      const matchesSearch =
+        !normalizedSearchTerm || userSearchContent.includes(normalizedSearchTerm);
+
+      const matchesRole = selectedRole === 'ALL' || user.role === selectedRole;
+
+      return matchesSearch && matchesRole;
+    });
+  });
 
   constructor(private readonly adminUserService: AdminUserService) {}
 
@@ -49,6 +71,23 @@ export class AdminUsers implements OnInit {
           this.errorMessage.set(this.getErrorMessage(error));
         },
       });
+  }
+
+  onSearchTermChange(value: string): void {
+    this.searchTerm.set(value);
+  }
+
+  onRoleFilterChange(value: UserRoleFilter): void {
+    this.roleFilter.set(value);
+  }
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.roleFilter.set('ALL');
+  }
+
+  hasActiveFilters(): boolean {
+    return !!this.searchTerm().trim() || this.roleFilter() !== 'ALL';
   }
 
   openRoleConfirmation(user: AdminUserResponse): void {
@@ -116,8 +155,6 @@ export class AdminUsers implements OnInit {
         },
       });
   }
-
-  
 
   getRoleLabel(role: UserRole): string {
     const roleLabels: Record<UserRole, string> = {
@@ -221,5 +258,13 @@ export class AdminUsers implements OnInit {
     }
 
     return 'Não foi possível processar a solicitação. Tente novamente mais tarde.';
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 }

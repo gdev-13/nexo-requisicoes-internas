@@ -36,6 +36,42 @@
       </button>
     </div>
 
+    <div class="users-filters">
+      <label class="filter-field">
+        <span>Buscar usuário</span>
+
+        <input
+          type="search"
+          placeholder="Busque por nome ou e-mail"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchTermChange($event)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>Perfil</span>
+
+        <select
+          [ngModel]="roleFilter()"
+          (ngModelChange)="onRoleFilterChange($event)"
+        >
+          <option value="ALL">Todos os perfis</option>
+          <option value="REQUESTER">Requisitantes</option>
+          <option value="ANALYST">Analistas</option>
+          <option value="ADMIN">Administradores</option>
+        </select>
+      </label>
+
+      <button
+        class="clear-filters"
+        type="button"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Limpar filtros
+      </button>
+    </div>
+
     @if (isLoading()) {
       <div class="empty-state">
         <strong>Carregando usuários...</strong>
@@ -45,6 +81,11 @@
       <div class="empty-state">
         <strong>Nenhum usuário encontrado</strong>
         <p>Quando houver usuários cadastrados, eles aparecerão aqui.</p>
+      </div>
+    } @else if (!filteredUsers().length) {
+      <div class="empty-state">
+        <strong>Nenhum usuário encontrado</strong>
+        <p>Altere os filtros ou limpe a busca para visualizar mais resultados.</p>
       </div>
     } @else {
       <div class="users-table-wrapper">
@@ -59,7 +100,7 @@
           </thead>
 
           <tbody>
-            @for (user of users(); track user.id) {
+            @for (user of filteredUsers(); track user.id) {
               <tr>
                 <td>
                   <div class="user-info">
