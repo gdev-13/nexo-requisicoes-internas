@@ -36,6 +36,13 @@
       >
         Usuários
       </a>
+      <a
+        routerLink="/admin/role-history"
+        routerLinkActive="active"
+        (click)="onCloseSidebar()"
+      >
+        Histórico
+      </a>
     } @else {
       <a
         routerLink="/dashboard"

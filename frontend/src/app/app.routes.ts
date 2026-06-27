@@ -12,6 +12,7 @@ import { RequestTypes } from './pages/request-types/request-types';
 import { AllRequests } from './pages/all-requests/all-requests';
 import { RequestHistory } from './pages/request-history/request-history';
 import { AdminUsers } from './pages/admin-users/admin-users';
+import { AdminRoleHistory } from './pages/admin-role-history/admin-role-history';
 
 import { workspaceGuard } from './guards/workspace.guard';
 import { guestGuard } from './guards/guest.guard';
@@ -72,6 +73,11 @@ export const routes: Routes = [
   {
     path: 'admin/users',
     component: AdminUsers,
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin/role-history',
+    component: AdminRoleHistory,
     canActivate: [adminGuard]
   },
   {

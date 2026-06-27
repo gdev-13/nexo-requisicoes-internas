@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { AdminUserResponse, UserRoleUpdate } from '../models/auth';
+import { AdminUserResponse, UserRoleUpdate, UserRoleHistoryResponse } from '../models/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,11 @@ export class AdminUserService {
     data: UserRoleUpdate,
   ): Observable<AdminUserResponse> {
     return this.http.patch<AdminUserResponse>(`${this.apiUrl}/${id}/role`, data);
+  }
+
+  getRoleHistory(): Observable<UserRoleHistoryResponse[]> {
+    return this.http.get<UserRoleHistoryResponse[]>(
+      `${this.apiUrl}/role-history`,
+    );
   }
 }
