@@ -11,9 +11,11 @@ import { RequestDetails } from './pages/request-details/request-details';
 import { RequestTypes } from './pages/request-types/request-types';
 import { AllRequests } from './pages/all-requests/all-requests';
 import { RequestHistory } from './pages/request-history/request-history';
+import { AdminUsers } from './pages/admin-users/admin-users';
 
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
+import { adminGuard } from './guards/admin.guard';
 import { analystGuard } from './guards/analyst.guard';
 import { requesterGuard } from './guards/requester.guard';
 
@@ -66,6 +68,11 @@ export const routes: Routes = [
     path: 'history',
     component: RequestHistory,
     canActivate: [authGuard]
+  },
+  {
+    path: 'admin/users',
+    component: AdminUsers,
+    canActivate: [adminGuard]
   },
   {
     path: '**',

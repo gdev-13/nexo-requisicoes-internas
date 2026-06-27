@@ -1,4 +1,4 @@
-export type UserRole = 'REQUESTER' | 'ANALYST';
+export type UserRole = 'REQUESTER' | 'ANALYST' | 'ADMIN';
 
 export interface RegisterRequest {
   name: string;
@@ -23,4 +23,12 @@ export interface UserResponse {
   role: UserRole;
   created_at: string;
   updated_at: string;
+}
+
+export interface AdminUserResponse extends UserResponse {
+  is_current_user: boolean;
+}
+
+export interface UserRoleUpdate {
+  role: 'REQUESTER' | 'ANALYST';
 }

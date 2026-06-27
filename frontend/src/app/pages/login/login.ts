@@ -2,9 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 
-import { LoginRequest } from '../../models/auth';
+import { LoginRequest, UserRole } from '../../models/auth';
 import { AuthStorageService } from '../../services/auth-storage.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -49,21 +49,34 @@ export class Login implements OnInit {
     };
 
     this.authService
-      .login(loginData)
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          this.authStorageService.saveToken(response.access_token);
-          this.router.navigate(['/dashboard'], {replaceUrl: true});
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorMessage = this.getLoginErrorMessage(error);
-        },
-      });
+    .login(loginData)
+    .pipe(
+      switchMap((response) => {
+        this.authStorageService.saveToken(response.access_token);
+        return this.authService.getCurrentUser();
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      }),
+    )
+    .subscribe({
+      next: (user) => {
+        this.router.navigateByUrl(this.getRedirectRoute(user.role), {
+          replaceUrl: true,
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = this.getLoginErrorMessage(error);
+      },
+    });
+  }
+
+  private getRedirectRoute(role: UserRole): string {
+    if (role === 'ADMIN') {
+      return '/admin/users';
+    }
+
+    return '/dashboard';
   }
 
   private getLoginErrorMessage(error: HttpErrorResponse): string {

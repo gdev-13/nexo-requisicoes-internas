@@ -32,10 +32,19 @@ export class AppSidebar {
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 
+  getHomeRoute(): string {
+    if (this.isAdmin()) {
+      return '/admin/users';
+    }
+
+    return '/dashboard';
+  }
+
   getRoleLabel(role: UserRole): string {
     const roleLabels: Record<UserRole, string> = {
       REQUESTER: 'Requisitante',
       ANALYST: 'Analista',
+      ADMIN: 'Administrador',
     };
 
     return roleLabels[role];
@@ -47,5 +56,9 @@ export class AppSidebar {
 
   isAnalyst(): boolean {
     return this.currentUser?.role === 'ANALYST';
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'ADMIN';
   }
 }

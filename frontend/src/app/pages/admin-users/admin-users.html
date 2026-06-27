@@ -1,0 +1,120 @@
+<app-layout (currentUserLoaded)="setCurrentUser($event)">
+  <header class="admin-users-header app-page-header">
+    <div>
+      <span class="app-eyebrow">Administração</span>
+      <h1>Gerenciamento de usuários</h1>
+      <p>
+        Visualize os usuários cadastrados e altere permissões entre requisitante
+        e analista.
+      </p>
+    </div>
+
+    @if (currentUser()) {
+      <span class="admin-current-user">
+        Administrador: {{ currentUser()?.name }}
+      </span>
+    }
+  </header>
+
+  @if (errorMessage()) {
+    <p class="admin-alert admin-alert-error">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+    <p class="admin-alert admin-alert-success">{{ successMessage() }}</p>
+  }
+
+  <section class="users-card app-surface-card">
+    <div class="users-card-header">
+      <div>
+        <span class="app-eyebrow">Usuários</span>
+        <h2>Contas cadastradas</h2>
+      </div>
+
+      <button type="button" (click)="loadUsers()" [disabled]="isLoading()">
+        {{ isLoading() ? 'Atualizando...' : 'Atualizar' }}
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="empty-state">
+        <strong>Carregando usuários...</strong>
+        <p>Aguarde enquanto buscamos as contas cadastradas.</p>
+      </div>
+    } @else if (!users().length) {
+      <div class="empty-state">
+        <strong>Nenhum usuário encontrado</strong>
+        <p>Quando houver usuários cadastrados, eles aparecerão aqui.</p>
+      </div>
+    } @else {
+      <div class="users-table-wrapper">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Usuário</th>
+              <th>Perfil</th>
+              <th>Criado em</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>
+                  <div class="user-info">
+                    <div>
+                      <strong>{{ user.name }}</strong>
+
+                      @if (user.is_current_user) {
+                        <span>Você</span>
+                      }
+                    </div>
+
+                    <small>{{ user.email }}</small>
+                  </div>
+                </td>
+
+                <td>
+                  <span
+                    class="role-badge"
+                    [class.role-badge-requester]="user.role === 'REQUESTER'"
+                    [class.role-badge-analyst]="user.role === 'ANALYST'"
+                    [class.role-badge-admin]="user.role === 'ADMIN'"
+                  >
+                    {{ getRoleLabel(user.role) }}
+                  </span>
+                </td>
+
+                <td>
+                  {{ user.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                </td>
+
+                <td>
+                  @if (canUpdateRole(user)) {
+                    <button
+                      class="role-action"
+                      type="button"
+                      (click)="updateRole(user)"
+                      [disabled]="updatingUserId() === user.id"
+                    >
+                      {{
+                        updatingUserId() === user.id
+                          ? 'Atualizando...'
+                          : getRoleActionLabel(user)
+                      }}
+                    </button>
+                  } @else if (user.role === 'ADMIN') {
+                    <span class="blocked-action">Administrador protegido</span>
+                  } @else {
+                    <span class="blocked-action">Usuário atual</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-layout>

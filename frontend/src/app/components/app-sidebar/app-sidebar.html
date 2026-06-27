@@ -12,7 +12,7 @@
   aria-label="Navegação principal"
 >
   <div class="sidebar-header">
-    <a class="sidebar-brand" routerLink="/dashboard" (click)="onCloseSidebar()">
+    <a class="sidebar-brand" [routerLink]="getHomeRoute()" (click)="onCloseSidebar()">
       <span class="logo-box">
         <img src="/nexo-logo.png" alt="Logo Nexo" />
       </span>
@@ -28,31 +28,42 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a
-      routerLink="/dashboard"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      (click)="onCloseSidebar()"
-    >
-      Dashboard
-    </a>
-    @if (isRequester()) {
+    @if (isAdmin()) {
       <a
-        routerLink="/requests/my"
+        routerLink="/admin/users"
         routerLinkActive="active"
         (click)="onCloseSidebar()"
       >
-        Minhas requisições
+        Usuários
       </a>
+    } @else {
       <a
-        routerLink="/requests/new"
+        routerLink="/dashboard"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
         (click)="onCloseSidebar()"
       >
-        Nova requisição
+        Dashboard
       </a>
-    }
-    @if (isAnalyst()) {
+
+      @if (isRequester()) {
+        <a
+          routerLink="/requests/my"
+          routerLinkActive="active"
+          (click)="onCloseSidebar()"
+        >
+          Minhas requisições
+        </a>
+
+        <a
+          routerLink="/requests/new"
+          routerLinkActive="active"
+          (click)="onCloseSidebar()"
+        >
+          Nova requisição
+        </a>
+      }
+
       @if (isAnalyst()) {
         <a
           routerLink="/requests"
@@ -62,35 +73,37 @@
           Todas as requisições
         </a>
       }
+
+      <a
+        routerLink="/request-types"
+        routerLinkActive="active"
+        (click)="onCloseSidebar()"
+      >
+        Tipos de requisição
+      </a>
+
+      <a
+        routerLink="/history"
+        routerLinkActive="active"
+        (click)="onCloseSidebar()"
+      >
+        Histórico
+      </a>
     }
-    <a
-      routerLink="/request-types"
-      routerLinkActive="active"
-      (click)="onCloseSidebar()"
-    >
-      Tipos de requisição
-    </a>
-    <a
-      routerLink="/history"
-      routerLinkActive="active"
-      (click)="onCloseSidebar()"
-    >
-      Histórico
-    </a>
-
   </nav>
-    <div class="sidebar-user">
-      @if (isLoadingUser) {
-        <span>Carregando perfil...</span>
-        <small>Verificando usuário logado</small>
-      } @else if (currentUser) {
-        <span>{{ currentUser.name }}</span>
-        <small>{{ getRoleLabel(currentUser.role) }} • {{ currentUser.email }}</small>
 
-        <button type="button" (click)="onLogout()">Sair</button>
-      } @else {
-        <span>Perfil indisponível</span>
-        <small>Faça login novamente</small>
-      }
-    </div>
+  <div class="sidebar-user">
+    @if (isLoadingUser) {
+      <span>Carregando perfil...</span>
+      <small>Verificando usuário logado</small>
+    } @else if (currentUser) {
+      <span>{{ currentUser.name }}</span>
+      <small>{{ getRoleLabel(currentUser.role) }} • {{ currentUser.email }}</small>
+
+      <button type="button" (click)="onLogout()">Sair</button>
+    } @else {
+      <span>Perfil indisponível</span>
+      <small>Faça login novamente</small>
+    }
+  </div>
 </aside>
