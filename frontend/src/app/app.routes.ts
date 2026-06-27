@@ -13,7 +13,7 @@ import { AllRequests } from './pages/all-requests/all-requests';
 import { RequestHistory } from './pages/request-history/request-history';
 import { AdminUsers } from './pages/admin-users/admin-users';
 
-import { authGuard } from './guards/auth.guard';
+import { workspaceGuard } from './guards/workspace.guard';
 import { guestGuard } from './guards/guest.guard';
 import { adminGuard } from './guards/admin.guard';
 import { analystGuard } from './guards/analyst.guard';
@@ -37,7 +37,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard]
+    canActivate: [workspaceGuard]
   },
   {
     path: 'requests/new',
@@ -52,12 +52,12 @@ export const routes: Routes = [
   {
     path: 'requests/:id',
     component: RequestDetails,
-    canActivate: [authGuard]
+    canActivate: [workspaceGuard]
   },
   {
     path: 'request-types',
     component: RequestTypes,
-    canActivate: [authGuard]
+    canActivate: [workspaceGuard]
   },
   {
     path: 'requests',
@@ -67,7 +67,7 @@ export const routes: Routes = [
   {
     path: 'history',
     component: RequestHistory,
-    canActivate: [authGuard]
+    canActivate: [workspaceGuard]
   },
   {
     path: 'admin/users',
