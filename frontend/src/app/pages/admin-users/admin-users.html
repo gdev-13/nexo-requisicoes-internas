@@ -24,6 +24,32 @@
     <p class="admin-alert admin-alert-success">{{ successMessage() }}</p>
   }
 
+  <section class="users-summary-grid" aria-label="Resumo dos usuários">
+    <article class="users-summary-card">
+      <span>Total</span>
+      <strong>{{ totalUsersCount() }}</strong>
+      <small>Usuários cadastrados</small>
+    </article>
+
+    <article class="users-summary-card">
+      <span>Requisitantes</span>
+      <strong>{{ requesterUsersCount() }}</strong>
+      <small>Podem criar requisições</small>
+    </article>
+
+    <article class="users-summary-card">
+      <span>Analistas</span>
+      <strong>{{ analystUsersCount() }}</strong>
+      <small>Podem analisar requisições</small>
+    </article>
+
+    <article class="users-summary-card">
+      <span>Administradores</span>
+      <strong>{{ adminUsersCount() }}</strong>
+      <small>Gerenciam permissões</small>
+    </article>
+  </section>
+
   <section class="users-card app-surface-card">
     <div class="users-card-header">
       <div>

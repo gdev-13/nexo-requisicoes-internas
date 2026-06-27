@@ -45,6 +45,20 @@ export class AdminUsers implements OnInit {
     });
   });
 
+  totalUsersCount = computed(() => this.users().length);
+
+  requesterUsersCount = computed(() =>
+    this.users().filter((user) => user.role === 'REQUESTER').length,
+  );
+
+  analystUsersCount = computed(() =>
+    this.users().filter((user) => user.role === 'ANALYST').length,
+  );
+
+  adminUsersCount = computed(() =>
+    this.users().filter((user) => user.role === 'ADMIN').length,
+  );
+
   constructor(private readonly adminUserService: AdminUserService) {}
 
   ngOnInit(): void {
