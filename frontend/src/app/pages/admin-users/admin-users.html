@@ -102,7 +102,7 @@
           <tbody>
             @for (user of filteredUsers(); track user.id) {
               <tr>
-                <td>
+                <td data-label="Usuário">
                   <div class="user-info">
                     <div>
                       <strong>{{ user.name }}</strong>
@@ -116,7 +116,7 @@
                   </div>
                 </td>
 
-                <td>
+                <td data-label="Perfil">
                   <span
                     class="role-badge"
                     [class.role-badge-requester]="user.role === 'REQUESTER'"
@@ -127,11 +127,11 @@
                   </span>
                 </td>
 
-                <td>
+                <td data-label="Criado em">
                   {{ user.created_at | date: 'dd/MM/yyyy HH:mm' }}
                 </td>
 
-                <td>
+                <td data-label="Ação">
                   @if (canUpdateRole(user)) {
                     <button
                       class="role-action"
@@ -158,6 +158,7 @@
       </div>
     }
   </section>
+
   <app-confirmation-modal
     [isOpen]="selectedUserForRoleUpdate() !== null"
     [title]="getRoleModalTitle()"
@@ -169,5 +170,5 @@
     [variant]="getRoleModalVariant()"
     (closed)="closeRoleConfirmation()"
     (confirmed)="confirmRoleUpdate()"
-    ></app-confirmation-modal>
+  ></app-confirmation-modal>
 </app-layout>
