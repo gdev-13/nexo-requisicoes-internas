@@ -4,7 +4,12 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.dependencies.auth import get_current_admin
 from app.models.user import User, UserRole
-from app.schemas.user import AdminUserResponse, UserRoleUpdate
+from app.models.user_hole_history import UserRoleHistory
+from app.schemas.user import (
+    AdminUserResponse,
+    UserRoleHistoryResponse,
+    UserRoleUpdate,
+)
 
 router = APIRouter(
     prefix="/admin",
@@ -50,6 +55,21 @@ def list_users(
     ]
 
 
+@router.get(
+    "/users/role-history",
+    response_model=list[UserRoleHistoryResponse],
+)
+def list_user_role_history(
+    _current_admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    return (
+        db.query(UserRoleHistory)
+        .order_by(UserRoleHistory.created_at.desc())
+        .all()
+    )
+
+
 @router.patch(
     "/users/{user_id}/role",
     response_model=AdminUserResponse,
@@ -86,8 +106,18 @@ def update_user_role(
             detail="O usuário já possui o perfil informado.",
         )
 
+    previous_role = user.role
+
     user.role = role_data.role
 
+    role_history = UserRoleHistory(
+        target_user_id=user.id,
+        admin_user_id=current_admin.id,
+        previous_role=previous_role,
+        new_role=role_data.role,
+    )
+
+    db.add(role_history)
     db.commit()
     db.refresh(user)
 
