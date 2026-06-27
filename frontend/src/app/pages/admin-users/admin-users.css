@@ -177,6 +177,27 @@
   font-weight: 800;
 }
 
+.users-table th:last-child,
+.users-table td:last-child {
+  width: 220px;
+  text-align: center;
+}
+
+.role-action,
+.blocked-action {
+  width: 190px;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.role-action {
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
 @media (max-width: 820px) {
   .admin-users-header,
   .users-card-header {
