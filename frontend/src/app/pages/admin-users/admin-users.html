@@ -95,7 +95,7 @@
                     <button
                       class="role-action"
                       type="button"
-                      (click)="updateRole(user)"
+                      (click)="openRoleConfirmation(user)"
                       [disabled]="updatingUserId() === user.id"
                     >
                       {{
@@ -117,4 +117,16 @@
       </div>
     }
   </section>
+  <app-confirmation-modal
+    [isOpen]="selectedUserForRoleUpdate() !== null"
+    [title]="getRoleModalTitle()"
+    [message]="getRoleModalMessage()"
+    [confirmLabel]="getRoleModalConfirmLabel()"
+    cancelLabel="Cancelar"
+    processingLabel="Atualizando..."
+    [isProcessing]="isUpdatingSelectedUser()"
+    [variant]="getRoleModalVariant()"
+    (closed)="closeRoleConfirmation()"
+    (confirmed)="confirmRoleUpdate()"
+    ></app-confirmation-modal>
 </app-layout>

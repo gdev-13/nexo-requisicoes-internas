@@ -6,10 +6,11 @@ import { finalize } from 'rxjs';
 import { AppLayout } from '../../components/app-layout/app-layout';
 import { AdminUserResponse, UserResponse, UserRole } from '../../models/auth';
 import { AdminUserService } from '../../services/admin-user.service';
+import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [AppLayout, DatePipe],
+  imports: [AppLayout, DatePipe, ConfirmationModal],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
 })
@@ -20,6 +21,7 @@ export class AdminUsers implements OnInit {
   updatingUserId = signal<number | null>(null);
   errorMessage = signal('');
   successMessage = signal('');
+  selectedUserForRoleUpdate = signal<AdminUserResponse | null>(null);
 
   constructor(private readonly adminUserService: AdminUserService) {}
 
@@ -49,10 +51,39 @@ export class AdminUsers implements OnInit {
       });
   }
 
+  openRoleConfirmation(user: AdminUserResponse): void {
+    if (!this.canUpdateRole(user)) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.selectedUserForRoleUpdate.set(user);
+  }
+
+  closeRoleConfirmation(): void {
+    if (this.isUpdatingSelectedUser()) {
+      return;
+    }
+
+    this.selectedUserForRoleUpdate.set(null);
+  }
+
+  confirmRoleUpdate(): void {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    if (!selectedUser) {
+      return;
+    }
+
+    this.updateRole(selectedUser);
+  }
+
   updateRole(user: AdminUserResponse): void {
     const nextRole = this.getNextRole(user.role);
 
     if (!nextRole) {
+      this.selectedUserForRoleUpdate.set(null);
       return;
     }
 
@@ -62,7 +93,12 @@ export class AdminUsers implements OnInit {
 
     this.adminUserService
       .updateUserRole(user.id, { role: nextRole })
-      .pipe(finalize(() => this.updatingUserId.set(null)))
+      .pipe(
+        finalize(() => {
+          this.updatingUserId.set(null);
+          this.selectedUserForRoleUpdate.set(null);
+        }),
+      )
       .subscribe({
         next: (updatedUser) => {
           this.users.update((users) =>
@@ -80,6 +116,8 @@ export class AdminUsers implements OnInit {
         },
       });
   }
+
+  
 
   getRoleLabel(role: UserRole): string {
     const roleLabels: Record<UserRole, string> = {
@@ -105,6 +143,64 @@ export class AdminUsers implements OnInit {
 
   canUpdateRole(user: AdminUserResponse): boolean {
     return !user.is_current_user && user.role !== 'ADMIN';
+  }
+
+  getRoleModalTitle(): string {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    if (!selectedUser) {
+      return 'Confirmar alteração de perfil';
+    }
+
+    return `Alterar perfil de ${selectedUser.name}?`;
+  }
+
+  getRoleModalMessage(): string {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    if (!selectedUser) {
+      return '';
+    }
+
+    const nextRole = this.getNextRole(selectedUser.role);
+
+    if (!nextRole) {
+      return '';
+    }
+
+    return `Essa ação alterará o perfil de ${selectedUser.name} para ${this.getRoleLabel(nextRole)}. Confirme apenas se essa mudança de permissão estiver correta.`;
+  }
+
+  getRoleModalConfirmLabel(): string {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    if (!selectedUser) {
+      return 'Confirmar';
+    }
+
+    const nextRole = this.getNextRole(selectedUser.role);
+
+    if (!nextRole) {
+      return 'Confirmar';
+    }
+
+    return `Confirmar: ${this.getRoleLabel(nextRole)}`;
+  }
+
+  getRoleModalVariant(): 'primary' | 'danger' {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    if (selectedUser?.role === 'ANALYST') {
+      return 'danger';
+    }
+
+    return 'primary';
+  }
+
+  isUpdatingSelectedUser(): boolean {
+    const selectedUser = this.selectedUserForRoleUpdate();
+
+    return !!selectedUser && this.updatingUserId() === selectedUser.id;
   }
 
   private getNextRole(role: UserRole): 'REQUESTER' | 'ANALYST' | null {
